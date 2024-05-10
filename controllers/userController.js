@@ -53,12 +53,57 @@ exports.getUserById = async (req, res) => {
         const user = await User.findByPk(userId);
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return apiErrorResponse(res, 404, 'User not found');
         }
 
-        res.status(200).json(user);
+       apiSuccessResponse(res, 200, user, 'user with fetched successfully');
     } catch (error) {
         console.error('Error fetching user by ID:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        apiErrorResponse(res, 500, 'Internal server error');
     }
 };
+
+exports.updateUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { name, email, gender, status, age } = req.body;
+
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+       return apiErrorResponse(res, 404, 'User not found');
+    }
+
+     // Update user attributes
+     await user.update({
+        name,
+        email,
+        gender,
+        status,
+        age
+    });
+
+   apiSuccessResponse(res, 200, user, 'user updated successfully');
+}
+catch(error){
+console.error('Error updating user:', error);
+apiErrorResponse(res, 500, 'Internal server error');
+}}
+
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const user = await User.findByPk(userId);
+
+        if (!user) {
+            return apiErrorResponse(res, 404, 'User not found');
+        }
+        
+        await user.destroy();
+        apiSuccessResponse(res, 200, user, 'user deleted successfully');
+}catch(error){
+    console.error('Error deleting user:', error);
+    apiErrorResponse(res, 500, 'Internal server error');
+}}
