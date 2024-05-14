@@ -1,9 +1,13 @@
 import { configureStore} from '@reduxjs/toolkit';
-import {rootReducer} from './reducers/userReducer';
+import userReducer from '../Slices/UserSlice';
+
 
 // Create the Redux store
 const store = configureStore({
-  reducer: rootReducer,
+    reducer:{
+        user: userReducer,
+    }
+
 });
 
 export default store;

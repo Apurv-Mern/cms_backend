@@ -3,50 +3,24 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Users.module.css';
 import { useEffect } from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useForm} from 'react-hook-form';
+import {baseUrl} from '../../api/baseurl';
 
-
-
-const AddUser = () => {
-  const { register, handleSubmit, formState: { errors } } = React.useForm();
-  const [users, setUsers] = React.useState([]);
-  const [isFormVisible, setIsFormVisible] = React.useState(false);
-  const [roles, setRoles] = React.useState([]);
- 
-
- const dispatch = useDispatch();
+import { useSelector, useDispatch } from 'react-redux';
+import {  createUser,fetchUsers,fetchRoles } from '../../redux/Slices/UserSlice';
+import { toggleFormVisibility } from '../../redux/Slices/UserSlice';
+ const AddUser = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const users = useSelector(state => state.user.users);
+  const isFormVisible = useSelector(state => state.user.isFormVisible);
+  const roles = useSelector(state => state.user.roles);
+  const dispatch = useDispatch();
+ ;
+  const handleToggleFormVisibility = () => {
+    dispatch(toggleFormVisibility()); // Dispatch the action to toggle form visibility
+  };
   const handleCreateUser = () => {
-    setIsFormVisible(!isFormVisible); // Toggle the form visibility
-  };
-
-
-  const onSubmit = async (data) => {
-    try {
-      const response = await axios.post('http://localhost:4044/api/user/', data);
-      console.log('User added successfully:', response.data);
-    } catch (error) {
-      console.error('Error adding user:', error);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get('http://localhost:4044/api/user');
-      console.log('Users:', response.data.data);
-      setUsers(response.data.data);
-
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
-  const fetchRoles = async () => {
-    try {
-      const response = await axios.get('http://localhost:4044/api/role/');
-      console.log('Roles:', response.data.data);
-      setRoles(response.data.data);
-    } catch (error) {
-      console.error('Error fetching roles:', error);
-    }
+    dispatch(createUser()); // Dispatch the action to create a new user
   };
 
   const handleUpdateUser = async (userId) => {
@@ -65,18 +39,14 @@ const AddUser = () => {
       console.error('Error deleting user:', error);
     }
   }
-
   useEffect(() => {
-    fetchUsers();
-    fetchRoles();
-  }, []); // Empty dependency array ensures the effect runs only once
-
-
-
+    dispatch(fetchUsers()); // Fetch users when component mounts
+    dispatch(fetchRoles());
+  }, [dispatch]);
 
   return (
     <div className='container'>
-      <button className='btn btn-primary mb-3' onClick={handleCreateUser}>
+      <button className='btn btn-primary mb-3' onClick={handleToggleFormVisibility}>
         {isFormVisible ? 'Close Form' : 'Create User'}
       </button>
       {isFormVisible && (
@@ -85,7 +55,7 @@ const AddUser = () => {
             <div className='card mt-5'>
               <div className='card-body'>
                 <h2 className='card-title'>Add User</h2>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={(e) => { e.preventDefault(); handleCreateUser(); }}>
                   <div className='form-group'>
                     <label htmlFor='name'>Name:</label>
                     <input type='text' className='form-control' {...register('name', { required: true, minLength: 3, maxLength: 50 })} />
