@@ -5,12 +5,10 @@ const UserRole = require('../models/userRole');
 
 exports.createUser = async (req, res) => {
     try {
-        const { name, email, gender, status, age } = req.body;
+        const { name, email, gender, status, age, roleName } = req.body;
 
            // Create a new user in the database
-           const user = await User.create({ name, email, gender, status, age });
-
-        //    console.log('New user created:', user);
+           const user = await User.create({ name, email, gender, status, age,roleName });
 
            // Fetch roleId from the request body
            const { roleId } = req.body;

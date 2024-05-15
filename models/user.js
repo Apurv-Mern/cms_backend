@@ -29,11 +29,13 @@ const User = sequelize.define('User', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-
     roleId: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        
+    },
+    roleName: {
+        type: DataTypes.STRING,
+        // defaultValue: 'user', 
     }
 },{
 tableName: 'users',
