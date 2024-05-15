@@ -1,61 +1,46 @@
 import React from 'react';
-import axios from 'axios';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Users.module.css';
+import './AddUsers.module.css';
 import { useEffect } from 'react';
 import {useForm} from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
-import {  createUser,fetchUsers,fetchRoles } from '../../redux/Slices/UserSlice';
-import { toggleFormVisibility } from '../../redux/Slices/UserSlice';
-
+import {  createUser,fetchRoles} from '../../redux/Slices/UserSlice';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
  const AddUser = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const users = useSelector(state => state.user.users);
-  const isFormVisible = useSelector(state => state.user.isFormVisible);
-  const roles = useSelector(state => state.user.roles);
-  const dispatch = useDispatch();
- ;
-  const handleToggleFormVisibility = () => {
-    dispatch(toggleFormVisibility()); // Dispatch the action to toggle form visibility
-  };
-  const handleCreateUser = () => {
-    dispatch(createUser()); // Dispatch the action to create a new user
-  };
+const navigate = useNavigate();
+const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const handleUpdateUser = async (userId) => {
-    // const response=await axios.put(`http://localhost:4044/api/user/${userId}`);
-    // console.log('User updated successfully:', response.data);
+ const roles = useSelector(state => state.user.roles);
+const dispatch = useDispatch();
+ // const userCreationStatus = useSelector(state => state.user.userCreationStatus);
+
+const onSubmit = async (data) => {
+  const result = await dispatch(createUser(data));
+  if (result.meta.requestStatus === 'fulfilled') {
+    toast.success('User created successfully!');
+    navigate('/admin/users');
+  } else {
+    toast.error('Failed to create user.');
   }
-  const handleDeleteUser = async (userId) => {
-    try {
-      // Send a DELETE request to delete the user
-      const response = await axios.delete(`http://localhost:4044/api/user/${userId}`);
+};
 
-      console.log('User deleted successfully:', response.data);
+useEffect(() => {
+  dispatch(fetchRoles());
+}, [dispatch]);
 
-      // fetchUsers();
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-  }
-  useEffect(() => {
-    dispatch(fetchUsers()); // Fetch users when component mounts
-    dispatch(fetchRoles());
-  }, [dispatch]);
+
 
   return (
     <div className='container'>
-      <button className='btn btn-primary mb-3' onClick={handleToggleFormVisibility}>
-        {isFormVisible ? 'Close Form' : 'Create User'}
-      </button>
-      {isFormVisible && (
-        <div className='row justify-content-center'>
+       <div className='row justify-content-center'>
           <div className='col-md-6'>
             <div className='card mt-5'>
               <div className='card-body'>
                 <h2 className='card-title'>Add User</h2>
-                <form onSubmit={(e) => { e.preventDefault(); handleCreateUser(); }}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   <div className='form-group'>
                     <label htmlFor='name'>Name:</label>
                     <input type='text' className='form-control' {...register('name', { required: true, minLength: 3, maxLength: 50 })} />
@@ -105,34 +90,6 @@ import { toggleFormVisibility } from '../../redux/Slices/UserSlice';
             </div>
           </div>
         </div>
-      )}
-      <h4>Existing Users</h4>
-      <table className='table'>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Gender</th>
-            <th>Status</th>
-            <th>Age</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Array.isArray(users) && users.map((user) => (
-            <tr key={user.userId}>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>{user.gender}</td>
-              <td>{user.status}</td>
-              <td>{user.age}</td>
-              <td><button className='btn btn-primary mb-3' onClick={() => handleUpdateUser(user.userId)}>Edit</button></td>
-              <td><button className='btn btn-primary mb-3' onClick={() => handleDeleteUser(user.userId)}>Delete</button></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 
