@@ -13,17 +13,19 @@ app.use(cors({
 
 const User=require('./models/user');
 const Role=require('./models/role');
+const Login=require('./models/login');
 // const User_Role=require('./models/userRole');
 
 const userRoutes = require('./routes/user');
 const roleRoutes = require('./routes/role');
-
+const authRoutes = require('./routes/authlogin');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 User.sync({alter: true  });
 Role.sync({alter: true  });
+// Login.sync({alter: true  });
 
 
 // Define associations
@@ -42,6 +44,8 @@ app.get('/', (req, res) => {
 app.use('/api/user', userRoutes);
 app.use('/api/role', roleRoutes);
 
+//login
+app.use('/api/auth', authRoutes);
 
 // Start server
 app.listen(PORT, () => {

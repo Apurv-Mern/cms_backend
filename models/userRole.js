@@ -1,7 +1,7 @@
 
 
 const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+const sequelize = require('./connection');
 
 const UserRole = sequelize.define('UserRole', {
 
@@ -16,14 +16,13 @@ const UserRole = sequelize.define('UserRole', {
     },
     roleId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     }
 },
     {
         tableName: 'User_Roles',
         timestamps: false,
-      
-
+ 
     });
 
 module.exports = UserRole;

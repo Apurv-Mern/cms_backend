@@ -1,6 +1,6 @@
 const {  DataTypes } = require('sequelize');
 
-const sequelize =require('../models/index');
+const sequelize =require('./connection');
 
 // Define the role model
 const Role = sequelize.define('role', {

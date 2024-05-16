@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 
-const sequelize = require('../models/index');
+const sequelize = require('./connection');
 
 // Define the User model
 const User = sequelize.define('User', {
@@ -17,6 +17,7 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
         // unique: true,
+      
     },
     gender: {
         type: DataTypes.STRING,
@@ -32,10 +33,11 @@ const User = sequelize.define('User', {
     roleId: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        
     },
     roleName: {
         type: DataTypes.STRING,
-        // defaultValue: 'user', 
+        defaultValue: 'user', 
     }
 },{
 tableName: 'users',
