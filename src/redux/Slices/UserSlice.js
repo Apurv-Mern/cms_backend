@@ -7,14 +7,21 @@ const initialState = {
   users: [],
   name:'',
   email:'',
+  gender:'male',
   status: 'active',
   age:'0',
   isFormVisible: false,
+  user: [],
   roles: [],
   userCreationStatus: null,
   error: null,
-
+  isCreatingUser: false,
 };
+// Define a fetchUserData Async Thunk
+export const fetchUserData = createAsyncThunk('users/fetchUserData', async (userId) => {
+  const response = await axios.get(`${baseUrl}/api/user/${userId}`);
+  return response.data;
+});
 
 // Define a thunk to create a new user
 export const createUser = createAsyncThunk('users/createUser', async (userData) => {
@@ -47,7 +54,7 @@ export const fetchRoles = createAsyncThunk('user/fetchRoles', async () => {
 
 
 // Define a thunk to update a user
-export const updateUser = createAsyncThunk('users/updateUser', async ({ userId, userData }) => {
+export const updateUser = createAsyncThunk('users/updateUser', async ({ userId, userData },{dispatch}) => {
   try {
     const response = await axios.put(`${baseUrl}/api/user/${userId}`, userData);
     return response.data;
@@ -84,6 +91,20 @@ const userSlice = createSlice({
     })
 
 
+    //fetchUserData
+    .addCase(fetchUserData.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(fetchUserData.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.user = action.payload;
+    })
+    .addCase(fetchUserData.rejected, (state, action) => {
+      state.status = 'failed';
+      state.error = action.error.message;
+    })
+
+
 
     //fetchUsers
       .addCase(fetchUsers.pending, (state) => {
@@ -92,7 +113,6 @@ const userSlice = createSlice({
      
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-    
         state.users = action.payload.sort((a, b) => {
           // Assuming the users have a createdAt field indicating creation time
           return new Date(b.createdAt) - new Date(a.createdAt); // Sort by createdAt in descending order
@@ -127,14 +147,17 @@ const userSlice = createSlice({
 
       .addCase(createUser.pending, (state) => {
         state.userCreationStatus = 'loading';
+        state.isCreatingUser = true;
       })
       .addCase(createUser.fulfilled, (state, action) => {
         state.userCreationStatus = 'success';
         state.users.push(action.payload);
+        state.isCreatingUser = false;
       })
       .addCase(createUser.rejected, (state, action) => {
         state.userCreationStatus = 'error';
         state.error = action.error.message;
+        state.isCreatingUser = false;
       });
 
   },

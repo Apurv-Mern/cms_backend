@@ -15,7 +15,9 @@ const { register, handleSubmit, formState: { errors } } = useForm();
 
  const roles = useSelector(state => state.user.roles);
 const dispatch = useDispatch();
- // const userCreationStatus = useSelector(state => state.user.userCreationStatus);
+
+ const isCreatingUser = useSelector((state) => state.user.isCreatingUser);
+
 
 const onSubmit = async (data) => {
   const result = await dispatch(createUser(data));
@@ -30,8 +32,6 @@ const onSubmit = async (data) => {
 useEffect(() => {
   dispatch(fetchRoles());
 }, [dispatch]);
-
-
 
   return (
     <div className='container'>
@@ -75,16 +75,16 @@ useEffect(() => {
                   <div />
                   <div className='form-group'>
                     <label htmlFor='roleId'>Role:</label>
-                    <select className='form-control' {...register('roleId', { required: true })}>
+                    <select className='form-control' {...register('roleName', { required: true })}>
                       <option value=''>Select Role</option>
                       {roles.map((role) => (
-                        <option key={role.roleId} value={role.roleId}>
+                        <option key={role.roleId} value={role.roleName}>
                           {role.roleName}
                         </option>
                       ))}
                     </select>
                   </div>
-                  <button type='submit' className='btn btn-primary'>Add User</button>
+                  <button type='submit' className='btn btn-primary'disabled={isCreatingUser}>Add User</button>
                 </form>
               </div>
             </div>
