@@ -4,7 +4,7 @@ import { useDispatch ,useSelector} from 'react-redux';
 import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import { updateUser,fetchUserData } from '../../redux/Slices/UserSlice'; // Ensure this is the correct path to your thunk
+import { updateUser,fetchUserData } from '../redux/Slices/UserSlice'; // Ensure this is the correct path to your thunk
 import { useState } from 'react';
 Modal.setAppElement('#root');
  const EditUserModal = ({ isModalOpen, closeModal, userId, roles,setIsLoad  }) => {

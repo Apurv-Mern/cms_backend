@@ -1,40 +1,65 @@
-import React from 'react'
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { baseUrl } from '../../api/baseurl';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './login.css';
-// eslint-disable-next-line
+
 const Login = () => {
-    return (
-        <div className='cont'>
-            <div className="login-container">
-                <h2>Login</h2>
-                <form action="/login" method="post">
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <input type="email" id="email" name="email" required />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input type="password" id="password" name="password" required />
-                    </div>
-                    <button type="submit" className="login-btn">Login</button>
-                </form>
-                <div className="social-login">
-                    <p>Or login with:</p>
-                    <div className="social-icons">
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState('');
+  const onSubmit = async (data) => {
+    try {
+      // Send a POST request to the login endpoint
+      await axios.post(`${baseUrl}/api/auth/login`, data);
 
-                        {/* <a href="#" className="social-icon facebook">
-                        <img src="facebook-icon.png" alt="Facebook" />
-                        <span>Facebook</span>
-                    </a>
-                    <a href="#" className="social-icon google">
-                        <img src="google-icon.png" alt="Google" />
-                        <span>Google</span>
-                    </a> */}
-                    </div>
-                </div>
-            </div>
-        </div>
+      const response = await axios.get(`${baseUrl}/api/user/`);
+      const users = response.data.data;
+      
+      // Check if the user exists in the database
+      const user = users.find(user => user.email === data.email);
+console.log(user.roleName);
+      if (user) {
+        // Email exists, check the role
+        if (user.roleName === 'user') {
+         navigate('/users/create');
+        } else if (user.roleName === 'admin') {
+          navigate('/admin/users');
+        }
+        else if(user.roleName==='manager')   {
+       navigate('/admin/users');
+            }
+      } else {
+        // Email doesn't exist
+        setLoginError('Invalid credentials');
+      } } catch (error) {
+        console.error('Login error:', error);
+        setLoginError('Internal server error');
+      }
+  };
 
-    )
-}
+  return (
+    <div className='containers'>
+      <div className="login-container">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" {...register("email", { required: "Email is required", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: "Invalid email address" } })} />
+            {errors.email && <span className="error-message">{errors.email.message}</span>}
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input type="password" id="password" name="password" {...register("password", { required: "Password is required" })} />
+            {errors.password && <span className="error-message">{errors.password.message}</span>}
+          </div>
+          <button type="submit" className="login-btn">Login</button>
+        </form>
+      </div>
+    </div>
+  );
+};
 
-export default Login
+export default Login;

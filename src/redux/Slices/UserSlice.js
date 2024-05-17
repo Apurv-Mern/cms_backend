@@ -113,10 +113,8 @@ const userSlice = createSlice({
      
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.users = action.payload.sort((a, b) => {
-          // Assuming the users have a createdAt field indicating creation time
-          return new Date(b.createdAt) - new Date(a.createdAt); // Sort by createdAt in descending order
-        });
+        state.users = action.payload;
+       
       })
      
       .addCase(fetchUsers.rejected, (state, action) => {

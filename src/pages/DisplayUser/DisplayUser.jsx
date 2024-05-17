@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchUsers, fetchRoles, deleteUser } from '../../redux/Slices/UserSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import EditUserModal from '../../components/EditUserModal/EditUserModal';
+import EditUserModal from '../../components/EditUserModal';
 
 const DisplayUser = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
