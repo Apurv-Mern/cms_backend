@@ -1,8 +1,12 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
+const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 4044;
 const cors = require('cors');
 app.use(cors());
+app.use(cookieParser());
+
 
 
 app.use(cors({
@@ -13,35 +17,27 @@ app.use(cors({
 
 const User=require('./models/user');
 const Role=require('./models/role');
-const Login=require('./models/login');
+const Userlogin=require('./models/userlogin');
 // const User_Role=require('./models/userRole');
 
 const userRoutes = require('./routes/user');
 const roleRoutes = require('./routes/role');
-const authRoutes = require('./routes/authlogin');
+const authRoutes = require('./routes/auth');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 User.sync({alter: true  });
 Role.sync({alter: true  });
-// Login.sync({alter: true  });
-
-
-// Define associations
-// User.hasOne(Role, { foreignKey: 'roleId' }); // One-to-one relationship between User and Role
-// Role.belongsTo(User, { foreignKey: 'roleId' }); // One-to-one relationship between Role and User
-
-
+Userlogin.sync({alter: true  });
 
 // Define routes
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
 
-
 // Use user routes
-app.use('/api/user', userRoutes);
+app.use('/api/user', userRoutes); 
 app.use('/api/role', roleRoutes);
 
 //login

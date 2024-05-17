@@ -8,13 +8,13 @@ exports.createUser = async (req, res) => {
         const { name, email, gender, status, age, roleName } = req.body;
             
         // Check if the email already exists in the database
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({where :{ email } });
+        console.log('Email already exists',existingUser);
+        if (existingUser) {
+            // If the email already exists, return an error response
+            return apiErrorResponse(res, 400, 'Email already exists');
+        }
 
-        // if (existingUser) {
-        //     // If the email already exists, return an error response
-        //     console.log('Email already exists',existingUser);
-        //     return apiErrorResponse(res, 400, 'Email already exists');
-        // }
         // If the email doesn't exist, create a new user in the database
            const user = await User.create({ name, email, gender, status, age,roleName });
 
@@ -37,7 +37,11 @@ exports.createUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
     try {
         // Fetch all users from the database
-        const users = await User.findAll();
+        const users = await User.findAll({
+            order: [
+                ['userId', 'DESC'], 
+              ],
+        });
 
         apiSuccessResponse(res, 200, users, 'users fetched successfully');
     } 
@@ -51,7 +55,6 @@ exports.getUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     try {
         const userId = req.params.id;
-
 
         const user = await User.findByPk(userId);
 
