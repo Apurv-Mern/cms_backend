@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {  createUser,fetchRoles} from '../../redux/Slices/UserSlice';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
+import useLogout from '../Logout/Logout';
  const AddUser = () => {
 const navigate = useNavigate();
 const { register, handleSubmit, formState: { errors } } = useForm();
@@ -17,7 +17,7 @@ const { register, handleSubmit, formState: { errors } } = useForm();
 const dispatch = useDispatch();
 
  const isCreatingUser = useSelector((state) => state.user.isCreatingUser);
-
+const logout=useLogout();
 
 const onSubmit = async (data) => {
   const result = await dispatch(createUser(data));
@@ -35,10 +35,12 @@ useEffect(() => {
 
   return (
     <div className='container'>
+      <button onClick={logout}>Logout</button>
        <div className='row justify-content-center'>
           <div className='col-md-6'>
             <div className='card mt-5'>
               <div className='card-body'>
+            
                 <h2 className='card-title'>Add User</h2>
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className='form-group'>

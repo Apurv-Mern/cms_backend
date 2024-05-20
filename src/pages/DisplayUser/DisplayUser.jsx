@@ -6,7 +6,7 @@ import { fetchUsers, fetchRoles, deleteUser } from '../../redux/Slices/UserSlice
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import EditUserModal from '../../components/EditUserModal';
-
+import useLogout from '../Logout/Logout';
 const DisplayUser = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -14,7 +14,7 @@ const DisplayUser = () => {
 
   const users = useSelector(state => state.user.users);
   const roles = useSelector(state => state.user.roles);
-
+  const logout=useLogout();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleClick = () => {
@@ -49,6 +49,7 @@ const DisplayUser = () => {
 
   return (
     <div>
+          <button onClick={logout}>Logout</button>
       <h4>Existing Users</h4>
       <button onClick={handleClick}>create User</button>
       <table className='table'>

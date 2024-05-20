@@ -5,6 +5,7 @@ import { baseUrl } from '../../api/baseurl';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './login.css';
+import Cookies from 'js-cookie';
 
 const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -13,14 +14,22 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       // Send a POST request to the login endpoint
-      await axios.post(`${baseUrl}/api/auth/login`, data);
+      const res=await axios.post(`${baseUrl}/api/auth/login`, data);
+ 
+      const { token } = res.data.data;
+      
+      Cookies.set('token', token, {
+        expires: 1, // 1 day expiration
+      
+        sameSite: 'strict'
+      });
 
       const response = await axios.get(`${baseUrl}/api/user/`);
       const users = response.data.data;
       
       // Check if the user exists in the database
       const user = users.find(user => user.email === data.email);
-console.log(user.roleName);
+     console.log(user.roleName);
       if (user) {
         // Email exists, check the role
         if (user.roleName === 'user') {
