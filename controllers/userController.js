@@ -1,11 +1,12 @@
 
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const { apiSuccessResponse, apiErrorResponse } = require('../common/apiResponse');
 // const UserRole = require('../models/userRole');
 
 exports.createUser = async (req, res) => {
     try {
-        const { name, email, gender, status, age, roleName } = req.body;
+        const { name, email, gender, status, age, roleName,password } = req.body;
             
         // Check if the email already exists in the database
         const existingUser = await User.findOne({where :{ email } });
@@ -14,9 +15,9 @@ exports.createUser = async (req, res) => {
             // If the email already exists, return an error response
             return apiErrorResponse(res, 400, 'Email already exists');
         }
-
+        const hashedPassword = await bcrypt.hash(password, 10);
         // If the email doesn't exist, create a new user in the database
-           const user = await User.create({ name, email, gender, status, age,roleName });
+        const user = await User.create({ name, email, gender, status, age,roleName,password:hashedPassword });
 
         //    // Fetch roleId from the request body
         //    const { roleId } = req.body;
