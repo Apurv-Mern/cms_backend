@@ -32,7 +32,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // Set the token in a cookie
-    res.cookie('token', token, { httpOnly: true });
+    res.cookie('token', token, { httpOnly: true ,   sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 });
 
     // Send success response
     return apiSuccessResponse(res, 200, { token,email }, 'Login successful');
