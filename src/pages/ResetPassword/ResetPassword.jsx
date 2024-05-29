@@ -37,6 +37,7 @@ const ResetPassword = () => {
 
   return (
     <div className='reset-password-container'>
+    <button onClick={() => navigate(-1)}> {'<-'}</button>
       <h2>Reset Password</h2>
       <div>
         <label>New Password:</label>

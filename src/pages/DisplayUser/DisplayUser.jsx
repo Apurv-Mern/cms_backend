@@ -40,7 +40,6 @@ const DisplayUser = () => {
       });
   };
 
-  
   useEffect(() => {
     dispatch(fetchUsers());
     dispatch(fetchRoles());
@@ -52,6 +51,8 @@ const DisplayUser = () => {
           <button onClick={logout}>Logout</button>
       <h4>Existing Users</h4>
       <button onClick={handleClick}>create User</button>
+      <label>search :</label>
+      <input type='text'  placeholder='Search by name'></input>
       <table className='table'>
         <thead>
           <tr>

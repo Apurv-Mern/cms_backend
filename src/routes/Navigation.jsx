@@ -6,14 +6,16 @@ import Roles from '../pages/Roles/Roles';
 import DisplayUser from '../pages/DisplayUser/DisplayUser';
 import NotFound from '../components/NotFound';
 import ProtectedRoute from '../components/ProtectedRoutes';
-import RequestPasswordReset from '../pages/Login/RequestPasswordReset';
-import ResetPassword from '../pages/Login/ResetPassword';
+import RequestPasswordReset from '../pages/RequestPasswordReset/RequestPasswordReset';
+import ResetPassword from '../pages/ResetPassword/ResetPassword';
+import DashBoard from '../pages/Dashboard/DashBoard';
 const Navigation = () => {
   return (
     <div>
       <Routes>
         <Route path="/" element={<Login/>} />  
         <Route path="/roles" element={<Roles />} /> 
+        <Route path="/dashboard" element={<ProtectedRoute><DashBoard/></ProtectedRoute>} />
         <Route path="/users/create" element={<ProtectedRoute><AddUser/></ProtectedRoute>} />  
         <Route path="/admin/users"  element={<ProtectedRoute><DisplayUser /></ProtectedRoute>} />
        
