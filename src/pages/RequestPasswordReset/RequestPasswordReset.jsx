@@ -1,38 +1,44 @@
-
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import "./RequestPasswordReset.css"
-import { useNavigate,useLocation  } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./RequestPasswordReset.css";
-import { baseUrl } from '../../api/baseurl';
-import { useForm } from 'react-hook-form';
+import { useNavigate, useLocation } from "react-router-dom";
+import "./RequestPasswordReset.css";
+import { baseUrl } from "../../api/baseurl";
+import { useForm } from "react-hook-form";
 
-
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 const RequestPasswordReset = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm();
 
-const navigate=useNavigate();
-const location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleRequestReset = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${baseUrl}/api/auth/request-password-reset`, { email });
+      const response = await axios.post(
+        `${baseUrl}/api/auth/request-password-reset`,
+        { email }
+      );
       console.log(response.data.data);
-      
-      // Navigate to reset password page with token
-      const token = response.data.data.resetLink.split('/').pop(); // Extract token from resetLink
-      navigate(`/reset-password/${token}`);
 
+      // Navigate to reset password page with token
+      const token = response.data.data.resetLink.split("/").pop(); // Extract token from resetLink
+      navigate(`/reset-password/${token}`);
     } catch (error) {
-      setMessage('Error sending password reset email');
+      setMessage("Error sending password reset email");
     }
   };
-  
+
   useEffect(() => {
     // Get the state passed via navigate
     const state = location.state;
@@ -42,9 +48,12 @@ const location = useLocation();
   }, [location.state, setValue]);
 
   return (
-    <div className='divs'>
+    <div className="divs">
+      <button onClick={() => navigate(-1)}>
+        {" "}
+        <ArrowBackIosNewIcon />
+      </button>
 
-<button onClick={() => navigate(-1)}> {'<-'}</button>
       <h2>Request Password Reset</h2>
       <form onSubmit={handleRequestReset}>
         <div>
@@ -59,8 +68,6 @@ const location = useLocation();
         <button type="submit">Request Password Reset</button>
       </form>
       {message && <p>{message}</p>}
-      
-
     </div>
   );
 };

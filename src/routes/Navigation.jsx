@@ -9,6 +9,7 @@ import ProtectedRoute from '../components/ProtectedRoutes';
 import RequestPasswordReset from '../pages/RequestPasswordReset/RequestPasswordReset';
 import ResetPassword from '../pages/ResetPassword/ResetPassword';
 import DashBoard from '../pages/Dashboard/DashBoard';
+import EditUser from '../pages/EditUser/EditUser';
 const Navigation = () => {
   return (
     <div>
@@ -17,6 +18,7 @@ const Navigation = () => {
         <Route path="/roles" element={<Roles />} /> 
         <Route path="/dashboard" element={<ProtectedRoute><DashBoard/></ProtectedRoute>} />
         <Route path="/users/create" element={<ProtectedRoute><AddUser/></ProtectedRoute>} />  
+        <Route path="/update/user" element={<ProtectedRoute><EditUser/></ProtectedRoute>} />  
         <Route path="/admin/users"  element={<ProtectedRoute><DisplayUser /></ProtectedRoute>} />
        
         <Route path="/admin" element={<ProtectedRoute><DisplayUser /></ProtectedRoute>} />
