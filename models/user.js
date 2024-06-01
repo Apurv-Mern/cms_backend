@@ -28,7 +28,7 @@ const User = sequelize.define('User', {
     },
     age: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     roleId: {
         type: DataTypes.INTEGER,
@@ -50,7 +50,17 @@ const User = sequelize.define('User', {
       resetPasswordExpires: {
         type: DataTypes.DATE,
         allowNull: true
-      }
+      },
+     googleId:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    displayName:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+
+      
 },{
 tableName: 'users',
 });
