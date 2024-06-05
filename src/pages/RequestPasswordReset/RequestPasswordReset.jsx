@@ -11,15 +11,10 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 const RequestPasswordReset = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm();
 
   const navigate = useNavigate();
   const location = useLocation();
+  console.log("dflocation",location);
 
   const handleRequestReset = async (e) => {
     e.preventDefault();
@@ -43,9 +38,10 @@ const RequestPasswordReset = () => {
     // Get the state passed via navigate
     const state = location.state;
     if (state && state.email) {
-      setValue("email", state.email);
+      setEmail(state.email);
+      console.log(state.email);
     }
-  }, [location.state, setValue]);
+  }, [location.state]);
 
   return (
     <div className="divs">
@@ -61,6 +57,7 @@ const RequestPasswordReset = () => {
           <input
             type="email"
             value={email}
+            name="email"
             onChange={(e) => setEmail(e.target.value)}
             required
           />

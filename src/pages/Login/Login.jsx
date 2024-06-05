@@ -7,22 +7,27 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 import Cookies from "js-cookie";
 
-
 import logoGoogle from "../../assets/logoGoogle.svg";
+import logoGithub from "../../assets/logoGithub.svg";
+import logoFacebook from "../../assets/logoFacebook.svg";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-import logoLinkedin from "../../assets/logoLinkedin.svg";
+
+import { useDispatch } from "react-redux";
+
 const Login = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
     reset,
   } = useForm();
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState("");
   const [emailForReset, setEmailForReset] = useState("");
-
-  
+  console.log("wsddgasfsdafsda", emailForReset);
   const onSubmit = async (data) => {
     try {
       // Send a POST request to the login endpoint
@@ -41,12 +46,11 @@ const Login = () => {
       // Check if the user exists in the database
       const user = users.find((user) => user.email === data.email);
 
-      console.log(user.password);
-      console.log(user.roleName);
-
       if (user) {
+        localStorage.setItem("user-details", JSON.stringify(user));
         // Email exists, check the role
         navigate("/dashboard");
+        toast.success("Login successful!");
         // if (user.roleName === "user") {
         //   navigate("/users/create");
         // } else if (user.roleName === "admin") {
@@ -56,28 +60,41 @@ const Login = () => {
         // }
       } else {
         setLoginError("user does not exist");
+        toast.error("User does not exist");
+
       }
-      console.log(data.email);
+     
       reset();
     } catch (error) {
-      setLoginError("user does not exist");
+      setLoginError("Login failed");
+      toast.error("Login failed");
     }
   };
-  console.log("emailForReset:", emailForReset);
+
   const handleRequestPasswordReset = () => {
     navigate("/request-password-reset", { state: { email: emailForReset } });
   };
- const handleGoogleLogin=()=>{
-  window.open("http://localhost:4044/auth/google/callback", "_self");
- }
- const handleLinkedinLogin=()=>
-  {
+
+
+
+// console.log("djfhidhf", emailForReset);
+  const handleEmailChange = (e) => {
+    const emailValue = e.target.value;
+    setValue("email", emailValue); // Set value in React Hook Form
+    setEmailForReset(emailValue); // Set local state value if needed
+  };
+  const handleGoogleLogin = () => {
+    window.open("http://localhost:4044/auth/google/callback", "_self");
+  };
+  const handleGithubLogin = () => {
+    window.open("http://localhost:4044/auth/github/callback", "_self");
+  };
+  const handleFacebookLogin = () => {
     window.open("http://localhost:4044/auth/linkedin/callback", "_self");
-  }
+  };
   return (
     <div className="containers">
       <div className="login-container">
-  
         <h2>Login</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-group">
@@ -86,6 +103,9 @@ const Login = () => {
               type="email"
               id="email"
               name="email"
+        
+              onChange={handleEmailChange}
+              
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -94,6 +114,10 @@ const Login = () => {
                 },
               })}
             />{" "}
+
+            {/* <input  name="emailForReset"
+              value={emailForReset}
+              onChange={handleEmailChange}/> */}
             {errors.email && !loginError && (
               <span className="error-message">{errors.email.message}</span>
             )}
@@ -114,39 +138,47 @@ const Login = () => {
           <button type="submit" className="login-btn">
             Login
           </button>
-          <br></br>
+        
           <button className="login-btn" onClick={handleRequestPasswordReset}>
-           Forgot Password?
+            Forgot Password?
           </button>
         </form>
-        <p>
-         ---------------------- or ---------------------------
-        </p>
-     
+        <p>---------------------- or ---------------------------</p>
+
         <div className="center">
-      <button className="google-btn" onClick={handleGoogleLogin}>
-      <img
-          src={logoGoogle}
-          height="50px"
-          width="50px"
-          alt="Google logo"
-        />
-      Login with Google</button>
-    </div>
-    <div className="center">
-      <button className="linkedin-btn" onClick={handleLinkedinLogin}>
-      <img
-          src={logoLinkedin}
-          height="50px"
-          width="50px"
-          alt="Linkedin logo"
-        />
-      Login with Linkedin</button>
-    </div>
-
-
-    </div>
-
+          <button className="google-btn" onClick={handleGoogleLogin}>
+            <img
+              src={logoGoogle}
+              height="50px"
+              width="50px"
+              alt="Google logo"
+            />
+            Login with Google
+          </button>
+        </div>
+        <div className="center">
+          <button className="github-btn" onClick={handleGithubLogin}>
+            <img
+              src={logoGithub}
+              height="50px"
+              width="50px"
+              alt="Github logo"
+            />
+            Login with Github
+          </button>
+        </div>
+        <div className="center">
+          <button className="facebook-btn" onClick={handleFacebookLogin}>
+            <img
+              src={logoFacebook}
+              height="50px"
+              width="50px"
+              alt="Facebook logo"
+            />
+            Login with Facebook
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

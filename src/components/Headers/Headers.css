@@ -43,4 +43,33 @@
     text-decoration: none;
     font-size: 18px;
   }
+
   
+  .name {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 15px; /* Space between name and role */
+    color: #343a40; /* Dark color for readability */
+  }
+  
+  .role-name {
+    font-size: 16px;
+    color: #6c757d; /* Muted color for the role name */
+    margin-right: 20px; /* Space between role name and button */
+  }
+
+
+  .menu-sub {
+    display: none; /* Hide the submenu by default */
+  }
+  
+  .menu-sub.show {
+    display: block; /* Show the submenu when the 'show' class is added */
+  }
+  
+  .menu-link {
+    cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+  }
+  .details{
+    background-color: #9ea1ab;
+  }
