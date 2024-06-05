@@ -19,8 +19,10 @@ async (accessToken, refreshToken, profile, done) => {
     if (!user) {
       user = await User.create({
         googleId: profile.id,
-        name: profile.displayName,
+        firstName: profile.name.givenName,
+        lastName: profile.name.familyName,
         email: profile.emails[0].value,
+     
       });
       await user.save();
     }

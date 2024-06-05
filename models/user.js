@@ -9,18 +9,22 @@ const User = sequelize.define('User', {
         primaryKey: true,
         autoIncrement: true,
     },
-    name: {
+    firstName: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: true,
     },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
         // unique: true,
-      
     },
     gender: {
         type: DataTypes.STRING,
+   
     },
     status: {
         type: DataTypes.STRING,
@@ -29,6 +33,7 @@ const User = sequelize.define('User', {
     age: {
         type: DataTypes.INTEGER,
         allowNull: true,
+     
     },
     roleId: {
         type: DataTypes.INTEGER,
@@ -56,6 +61,10 @@ const User = sequelize.define('User', {
         allowNull: true,
     },
     displayName:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    githubId:{
         type: DataTypes.STRING,
         allowNull: true,
     },

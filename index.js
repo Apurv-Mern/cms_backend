@@ -6,7 +6,8 @@ const PORT = process.env.PORT || 4044;
 const cors = require("cors");
 
 const session = require("express-session");
-const passport = require("./sociallogin/passportGoogle");
+const passport = require("./Auth/passportGoogle.js");
+const githubAuth = require("./Auth/passportGithub.js");
 
 app.use(cors());
 app.use(cookieParser());
@@ -35,8 +36,6 @@ app.use(express.urlencoded({ extended: true }));
 User.sync({ alter: true });
 Role.sync({ alter: true });
 
-
-
 // Define routes
 app.get("/", (req, res) => {
   res.send("Hello, World!");
@@ -46,15 +45,18 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRoutes);
 app.use("/api/role", roleRoutes);
 
-
-
 //login
 app.use("/api/auth", authRoutes);
 
-//passport
+
+
+
+
+
+//passport Google
 app.use(
   session({
-    secret: "hbd786dcdsyc7d6c8d8ccdjkH",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -65,6 +67,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+//passport google routes
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
@@ -74,7 +78,20 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     successRedirect: "http://localhost:3000/dashboard",
-    failureRedirect: "http://localhost:3000/login",
+    failureRedirect: "http://localhost:3000/",
+  })
+);
+//passport Github 
+
+app.use(githubAuth.initialize());
+app.use(githubAuth.session());
+//Github routes
+app.get("/auth/github", githubAuth.authenticate("github"));
+app.get(
+  "/auth/github/callback",
+  githubAuth.authenticate("github", {
+    successRedirect: "http://localhost:3000/dashboard",
+    failureRedirect: "http://localhost:3000/",
   })
 );
 

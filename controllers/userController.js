@@ -6,7 +6,7 @@ const { apiSuccessResponse, apiErrorResponse } = require('../common/apiResponse'
 
 exports.createUser = async (req, res) => {
     try {
-        const { name, email, gender, status, age, roleName,password } = req.body;
+        const { firstName,lastName, email, gender, status, age, roleName,password } = req.body;
             
         // Check if the email already exists in the database
         const existingUser = await User.findOne({where :{ email } });
@@ -15,9 +15,13 @@ exports.createUser = async (req, res) => {
             // If the email already exists, return an error response
             return apiErrorResponse(res, 400, 'Email already exists');
         }
+        // Check if password is provided
+          if (!password) {
+            return apiErrorResponse(res,400,"password is required");
+      }
         const hashedPassword = await bcrypt.hash(password, 10);
         // If the email doesn't exist, create a new user in the database
-        const user = await User.create({ name, email, gender, status, age,roleName,password:hashedPassword });
+        const user = await User.create({ firstName,lastName, email, gender, status, age,roleName,password:hashedPassword });
 
         //    // Fetch roleId from the request body
         //    const { roleId } = req.body;
@@ -73,21 +77,24 @@ exports.getUserById = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const { name, email, gender, status, age } = req.body;
+        const {  email, gender, status, age ,firstName,lastName,password} = req.body;
 
         const user = await User.findByPk(userId);
 
         if (!user) {
        return apiErrorResponse(res, 404, 'User not found');
     }
-
+    const hashedPassword = await bcrypt.hash(password, 10);
      // Update user attributes
      await user.update({
-        name,
+        firstName,
+        lastName,
         email,
         gender,
         status,
-        age
+        age,
+  
+        password:hashedPassword
     });
 
    apiSuccessResponse(res, 200, user, 'user updated successfully');
