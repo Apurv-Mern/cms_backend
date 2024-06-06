@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createUser, fetchRoles } from "../../../../redux/Slices/UserSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import useLogout from "../../../Logout/Logout";
+import useLogout from "../../../Auth/Logout/Logout";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 const AddUser = () => {
   const navigate = useNavigate();

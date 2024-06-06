@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./Headers.css";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
-import useLogout from "../../pages/Logout/Logout";
+import useLogout from "../../pages/Auth/Logout/Logout";
 import { useSelector } from "react-redux";
 
 const Header = () => {
@@ -21,11 +21,22 @@ const Header = () => {
   const formattedLastName =
     lastName.charAt(0).toUpperCase() + lastName.slice(1);
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+    useEffect(() => {
+      const toggleSidebar = () => {
+        const sidebar = document.getElementById('layout-menu');
+        sidebar.classList.toggle('hidden');
+      };
+  
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      sidebarToggle.addEventListener('click', toggleSidebar);
+  
+      // Clean up the event listener on component unmount
+      return () => {
+        sidebarToggle.removeEventListener('click', toggleSidebar);
+      };
+    }, []);
+  
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
 
   return (
     <>
@@ -38,7 +49,7 @@ const Header = () => {
             <span class="app-brand-text demo menu-text fw-semibold">CMS</span>
           </div>
 
-          <div class="layout-menu-toggle menu-link text-large ms-auto">
+          <div id="sidebarToggle"  class="layout-menu-toggle menu-link text-large ms-auto">
             <svg
               width="24"
               height="24"
@@ -74,7 +85,7 @@ const Header = () => {
               <i class="menu-icon tf-icons ri-home-smile-line"></i>
               <div data-i18n="Dashboards">Master</div>
             </Link>
-            <ul className={`menu-sub ${isMenuOpen ? "show" : ""}`}>
+            <ul className="menu-sub">
               <li class="menu-item">
                 <Link to={"/admin/users"} class="menu-link">
                   <div data-i18n="Dashboard">User</div>

@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-
+import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog";
 
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -20,6 +20,8 @@ import TablePagination from "@mui/material/TablePagination";
 
 const DisplayUser = () => {
   const [isLoad, setIsLoad] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
@@ -47,14 +49,25 @@ const DisplayUser = () => {
   };
 
   //delete user
-  const handleDeleteUser = (userId) => {
-    dispatch(deleteUser(userId))
+  const handleOpenDialog = (userId) => {
+    setSelectedUserId(userId);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedUserId(null);
+  };
+  const handleConfirmDelete = () => {
+    dispatch(deleteUser(selectedUserId))
       .then(() => {
         toast.success("User deleted successfully");
-        setIsLoad(true);
+        setIsLoad(true); // Assuming setIsLoad is used to refresh data, adjust as needed
+        handleCloseDialog();
       })
       .catch(() => {
         toast.error("Failed to delete user");
+        handleCloseDialog();
       });
   };
   const handleClearSearch = () => {
@@ -102,7 +115,7 @@ const DisplayUser = () => {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value, 8));
     setPage(0);
   };
 
@@ -262,7 +275,7 @@ const DisplayUser = () => {
                     <IconButton
                       aria-label="Delete user"
                       title="Delete User"
-                      onClick={() => handleDeleteUser(user.userId)}
+                      onClick={() =>handleOpenDialog(user.userId) }
                     >
                       <DeleteIcon style={{ color: "#aa1313" }} />
                     </IconButton>
@@ -271,6 +284,11 @@ const DisplayUser = () => {
               ))}
           </tbody>
         </table>
+        <ConfirmDeleteDialog
+        open={openDialog}
+        handleClose={handleCloseDialog}
+        handleConfirm={handleConfirmDelete}
+      />
 
         <TablePagination
           component="div"

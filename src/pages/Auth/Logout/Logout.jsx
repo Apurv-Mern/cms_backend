@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const useLogout = () => {
   const navigate = useNavigate();
@@ -6,6 +7,7 @@ const useLogout = () => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('roleName');
+    Cookies.remove('token');
     navigate('/');
   };
 

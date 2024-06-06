@@ -73,3 +73,22 @@
   .details{
     background-color: #9ea1ab;
   }
+/* Sidebar default hidden state */.layout-menu.hidden {
+  transform: translateX(-230px);
+  /*Adjustthevaluebasedonsidebarwidth*/transition: transform 0.3s ease;
+  -webkit-transform: translateX(-230px);
+  -moz-transform: translateX(-230px);
+  -ms-transform: translateX(-230px);
+  -o-transform: translateX(-230px);
+}
+
+/* Sidebar visible state */
+.layout-menu {
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
+/* Sidebar toggle button position */
+.layout-menu-toggle {
+  cursor: pointer;
+}

@@ -1,20 +1,20 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { baseUrl } from "../../api/baseurl";
+import { baseUrl } from "../../../api/baseurl";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 import Cookies from "js-cookie";
 
-import logoGoogle from "../../assets/logoGoogle.svg";
-import logoGithub from "../../assets/logoGithub.svg";
-import logoFacebook from "../../assets/logoFacebook.svg";
+import logoGoogle from "../../../assets/logoGoogle.svg";
+import logoGithub from "../../../assets/logoGithub.svg";
+import logoFacebook from "../../../assets/logoFacebook.svg";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-import { useDispatch } from "react-redux";
+
 
 const Login = () => {
   const {
@@ -50,8 +50,9 @@ const Login = () => {
         localStorage.setItem("user-details", JSON.stringify(user));
         // Email exists, check the role
         navigate("/dashboard");
-        toast.success("Login successful!");
+       
         // if (user.roleName === "user") {
+
         //   navigate("/users/create");
         // } else if (user.roleName === "admin") {
         //   navigate("/admin/users");
@@ -92,6 +93,16 @@ const Login = () => {
   const handleFacebookLogin = () => {
     window.open("http://localhost:4044/auth/linkedin/callback", "_self");
   };
+  useEffect(() => {
+    // Check if the token exists in cookies
+    const token = Cookies.get('token');
+    if (token) {
+      navigate('/dashboard');
+    }
+    else{
+      navigate('/');
+    }
+  }, [navigate]);
   return (
     <div className="containers">
       <div className="login-container">

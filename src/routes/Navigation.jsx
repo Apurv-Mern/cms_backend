@@ -1,7 +1,7 @@
-import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, useLocation  } from "react-router-dom";
 import AddUser from "../pages/Master/User/AddUser/AddUser";
-import Login from "../pages/Login/Login";
+import Login from "../pages/Auth/Login/Login";
 import Roles from "../pages/Roles/Roles";
 import DisplayUser from "../pages/Master/User/DisplayUser/DisplayUser";
 import NotFound from "../components/NotFound";
@@ -13,8 +13,18 @@ import EditUser from "../pages/Master/User/EditUser/EditUser";
 import Header from "../components/Headers/Headers";
 
 const Navigation = () => {
+
   const location = useLocation();
-  const isLoginPage = location.pathname === "/"|| location.pathname === '/request-password-reset' || location.pathname.startsWith('/reset-password/');;
+  const isLoginPage =
+    location.pathname === "/" ||
+    location.pathname === "/request-password-reset" ||
+    location.pathname.startsWith("/reset-password/");
+
+  useEffect(() => {
+     if (isLoginPage) {
+      window.location.replace("/"); // Redirect to home if on login page
+    }
+  }, []);
 
   return (
     <>
@@ -78,7 +88,7 @@ const Navigation = () => {
                         </ProtectedRoute>
                       }
                     />
-                       <Route path="*" element={<NotFound />} />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
                 </div>
               </div>
