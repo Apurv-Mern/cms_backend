@@ -33,8 +33,12 @@ const authRoutes = require("./routes/auth");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Establish the relationship
+Role.hasMany(User, { foreignKey: "roleId" });
+User.belongsTo(Role, { foreignKey: "roleId" });
+
 User.sync({ alter: true });
-Role.sync({ alter: true });
+Role.sync();
 
 // Define routes
 app.get("/", (req, res) => {
@@ -43,15 +47,11 @@ app.get("/", (req, res) => {
 
 // Use user routes
 app.use("/api/user", userRoutes);
+
 app.use("/api/role", roleRoutes);
 
 //login
 app.use("/api/auth", authRoutes);
-
-
-
-
-
 
 //passport Google
 app.use(
@@ -67,7 +67,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 //passport google routes
 app.get(
   "/auth/google",
@@ -81,7 +80,7 @@ app.get(
     failureRedirect: "http://localhost:3000/",
   })
 );
-//passport Github 
+//passport Github
 
 app.use(githubAuth.initialize());
 app.use(githubAuth.session());

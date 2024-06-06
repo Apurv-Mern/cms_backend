@@ -1,19 +1,35 @@
-const {  DataTypes } = require('sequelize');
+const { DataTypes } = require("sequelize");
 
-const sequelize =require('./connection');
+const sequelize = require("./connection");
 
-// Define the role model
-const Role = sequelize.define('role', {
+const Role = sequelize.define(
+  "role",
+  {
     roleId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true, 
-      },
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
     roleName: {
-         type: DataTypes.STRING,
-         allowNull: false,
-         
-  }
-});
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    // createdAt: {
+    //   type: DataTypes.DATE,
+    //   allowNull: true,
+    //   defaultValue: DataTypes.NOW,
+    // },
+    // updatedAt: {
+    //   type: DataTypes.DATE,
+    //   allowNull: true,
+    //   defaultValue: DataTypes.NOW,
+    // },
+  },
 
-module.exports =Role;
+  {
+    tableName: "roles",
+    createdAt: true,
+    updatedAt: true,
+  }
+);
+module.exports = Role;

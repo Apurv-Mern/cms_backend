@@ -1,28 +1,27 @@
+const { DataTypes } = require("sequelize");
+const sequelize = require("./connection");
 
-
-const { DataTypes } = require('sequelize');
-const sequelize = require('./connection');
-
-const UserRole = sequelize.define('UserRole', {
-
+const UserRole = sequelize.define(
+  "UserRole",
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true // If you want an auto-incrementing primary key
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     roleId: {
-        type: DataTypes.INTEGER,
-        allowNull: true
-    }
-},
-    {
-        tableName: 'User_Roles',
-        timestamps: false,
- 
-    });
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+  },
+  {
+    tableName: "User_Roles",
+    timestamps: false,
+  }
+);
 
 module.exports = UserRole;
