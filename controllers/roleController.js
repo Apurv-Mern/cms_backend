@@ -35,3 +35,25 @@ exports.getRoles = async (req, res) => {
     apiErrorResponse(res, 500, "Internal server error");
   }
 };
+exports.updateRole = async (req, res) => {
+  try {
+    const roleId = req.params.id;
+    const { roleName } = req.body;
+
+    const role = await Role.findByPk(roleId);
+
+    if (!role) {
+      return apiErrorResponse(res, 404, "Role not found");
+    }
+
+    // Update role attributes
+    await role.update({
+      roleName,
+    });
+
+    apiSuccessResponse(res, 200, role, "Role updated successfully");
+  } catch (error) {
+    console.error("Error updating user:", error);
+    apiErrorResponse(res, 500, "Internal server error");
+  }
+};

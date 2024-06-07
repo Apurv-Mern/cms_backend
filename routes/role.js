@@ -1,12 +1,14 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const roleController = require('../controllers/roleController');
-
+const roleController = require("../controllers/roleController");
 
 // POST /api/roles
-router.post('/', roleController.createRole);
+router.post("/", roleController.createRole);
 
 // GET /api/roles
-router.get('/', roleController.getRoles);
+router.get("/", roleController.getRoles);
+
+//put /api/roles
+router.put("/:id", roleController.updateRole);
 
 module.exports = router;
