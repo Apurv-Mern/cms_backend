@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import "./Headers.css";
 import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
-import useLogout from "../../pages/Auth/Logout/Logout";
+import useLogout from "../../pages/Auth/Logout";
 import { useSelector } from "react-redux";
 
 const Header = () => {
@@ -21,22 +21,20 @@ const Header = () => {
   const formattedLastName =
     lastName.charAt(0).toUpperCase() + lastName.slice(1);
 
-    useEffect(() => {
-      const toggleSidebar = () => {
-        const sidebar = document.getElementById('layout-menu');
-        sidebar.classList.toggle('hidden');
-      };
-  
-      const sidebarToggle = document.getElementById('sidebarToggle');
-      sidebarToggle.addEventListener('click', toggleSidebar);
-  
-      // Clean up the event listener on component unmount
-      return () => {
-        sidebarToggle.removeEventListener('click', toggleSidebar);
-      };
-    }, []);
-  
+  useEffect(() => {
+    const toggleSidebar = () => {
+      const sidebar = document.getElementById("layout-menu");
+      sidebar.classList.toggle("hidden");
+    };
 
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    sidebarToggle.addEventListener("click", toggleSidebar);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      sidebarToggle.removeEventListener("click", toggleSidebar);
+    };
+  }, []);
 
   return (
     <>
@@ -49,7 +47,10 @@ const Header = () => {
             <span class="app-brand-text demo menu-text fw-semibold">CMS</span>
           </div>
 
-          <div id="sidebarToggle"  class="layout-menu-toggle menu-link text-large ms-auto">
+          <div
+            id="sidebarToggle"
+            class="layout-menu-toggle menu-link text-large ms-auto"
+          >
             <svg
               width="24"
               height="24"
@@ -79,7 +80,6 @@ const Header = () => {
             </Link>
           </li>
 
-          
           <li class="menu-item open">
             <Link to={"#"} class="menu-link">
               <i class="menu-icon tf-icons ri-home-smile-line"></i>
@@ -91,11 +91,11 @@ const Header = () => {
                   <div data-i18n="Dashboard">User</div>
                 </Link>
               </li>
-              {/* <li class="menu-item">
-                <Link to={"/users/create"} class="menu-link">
-                  <div data-i18n="Dashboard">Create User</div>
+              <li class="menu-item">
+                <Link to={"/admin/roles"} class="menu-link">
+                  <div data-i18n="Dashboard">Role</div>
                 </Link>
-              </li> */}
+              </li>
             </ul>
           </li>
         </ul>

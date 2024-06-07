@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createUser, fetchRoles } from "../../../../redux/Slices/UserSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import useLogout from "../../../Auth/Logout/Logout";
+import useLogout from "../../../Auth/Logout";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 const AddUser = () => {
   const navigate = useNavigate();
@@ -193,16 +193,15 @@ const AddUser = () => {
                 </div>
               </div>
               <div className="col-12 text-end">
-              <button
-              type="submit"
-              className="btn btn-dark waves-effect waves-light"
-              disabled={isCreatingUser}
-            >
-              Add User
-            </button>
+                <button
+                  type="submit"
+                  className="btn btn-dark waves-effect waves-light"
+                  disabled={isCreatingUser}
+                >
+                  Add User
+                </button>
               </div>
             </div>
-           
           </form>
         </div>
       </div>

@@ -1,19 +1,18 @@
 import React, { useEffect } from "react";
-import { Routes, Route, useLocation  } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import AddUser from "../pages/Master/User/AddUser/AddUser";
 import Login from "../pages/Auth/Login/Login";
-import Roles from "../pages/Roles/Roles";
+import Roles from "../pages/Master/Role/Roles/DisplayRole";
 import DisplayUser from "../pages/Master/User/DisplayUser/DisplayUser";
 import NotFound from "../components/NotFound";
 import ProtectedRoute from "../components/ProtectedRoutes";
-import RequestPasswordReset from "../pages/RequestPasswordReset/RequestPasswordReset";
-import ResetPassword from "../pages/ResetPassword/ResetPassword";
+import RequestPasswordReset from "../pages/Auth/RequestPasswordReset";
+import ResetPassword from "../pages/Auth/ResetPassword";
 import DashBoard from "../pages/Dashboard/DashBoard";
 import EditUser from "../pages/Master/User/EditUser/EditUser";
 import Header from "../components/Headers/Headers";
 
 const Navigation = () => {
-
   const location = useLocation();
   const isLoginPage =
     location.pathname === "/" ||
@@ -21,7 +20,7 @@ const Navigation = () => {
     location.pathname.startsWith("/reset-password/");
 
   useEffect(() => {
-     if (isLoginPage) {
+    if (isLoginPage) {
       window.location.replace("/"); // Redirect to home if on login page
     }
   }, []);
@@ -46,7 +45,14 @@ const Navigation = () => {
               <div className="content-wrapper">
                 <div className="container-xxl">
                   <Routes>
-                    <Route path="/roles" element={<Roles />} />
+                    <Route
+                      path="/admin/roles"
+                      element={
+                        <ProtectedRoute>
+                          <Roles />
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/dashboard"
                       element={

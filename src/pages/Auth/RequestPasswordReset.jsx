@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./RequestPasswordReset.css";
+
 import { useNavigate, useLocation } from "react-router-dom";
-import "./RequestPasswordReset.css";
+
 import { baseUrl } from "../../api/baseurl";
 import { useForm } from "react-hook-form";
 
@@ -14,7 +14,7 @@ const RequestPasswordReset = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("dflocation",location);
+  console.log("dflocation", location);
 
   const handleRequestReset = async (e) => {
     e.preventDefault();
