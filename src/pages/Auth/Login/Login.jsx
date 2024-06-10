@@ -10,11 +10,8 @@ import Cookies from "js-cookie";
 import logoGoogle from "../../../assets/logoGoogle.svg";
 import logoGithub from "../../../assets/logoGithub.svg";
 import logoFacebook from "../../../assets/logoFacebook.svg";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const {
@@ -50,7 +47,7 @@ const Login = () => {
         localStorage.setItem("user-details", JSON.stringify(user));
         // Email exists, check the role
         navigate("/dashboard");
-       
+
         // if (user.roleName === "user") {
 
         //   navigate("/users/create");
@@ -62,9 +59,8 @@ const Login = () => {
       } else {
         setLoginError("user does not exist");
         toast.error("User does not exist");
-
       }
-     
+
       reset();
     } catch (error) {
       setLoginError("Login failed");
@@ -76,9 +72,7 @@ const Login = () => {
     navigate("/request-password-reset", { state: { email: emailForReset } });
   };
 
-
-
-// console.log("djfhidhf", emailForReset);
+  // console.log("djfhidhf", emailForReset);
   const handleEmailChange = (e) => {
     const emailValue = e.target.value;
     setValue("email", emailValue); // Set value in React Hook Form
@@ -95,12 +89,9 @@ const Login = () => {
   };
   useEffect(() => {
     // Check if the token exists in cookies
-    const token = Cookies.get('token');
-    if (token) {
-      navigate('/dashboard');
-    }
-    else{
-      navigate('/');
+    const token = Cookies.get("token");
+    if (!token) {
+      navigate("/");
     }
   }, [navigate]);
   return (
@@ -114,9 +105,7 @@ const Login = () => {
               type="email"
               id="email"
               name="email"
-        
               onChange={handleEmailChange}
-              
               {...register("email", {
                 required: "Email is required",
                 pattern: {
@@ -125,7 +114,6 @@ const Login = () => {
                 },
               })}
             />{" "}
-
             {/* <input  name="emailForReset"
               value={emailForReset}
               onChange={handleEmailChange}/> */}
@@ -149,7 +137,7 @@ const Login = () => {
           <button type="submit" className="login-btn">
             Login
           </button>
-        
+
           <button className="login-btn" onClick={handleRequestPasswordReset}>
             Forgot Password?
           </button>

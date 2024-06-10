@@ -3,12 +3,14 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { toast } from "react-toastify";
 
 const CreateRoleModal = ({ open, handleClose, handleCreate }) => {
   const [roleName, setRoleName] = useState("");
 
   const handleSubmit = () => {
     handleCreate(roleName);
+    toast.success("Role created successfully!");
     setRoleName("");
   };
 
