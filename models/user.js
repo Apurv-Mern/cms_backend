@@ -72,10 +72,18 @@ const User = sequelize.define(
         model: Role,
         key: "roleId",
       },
+
+      // softDelete: {
+      //   type: DataTypes.DATE,
+      //   allowNull: true,
+      //   defaultValue: null, // Setting default value to null makes it soft delete
+      // },
     },
   },
   {
     tableName: "users",
+    paranoid: true,
+    deletedAt: "deletedAt",
   }
 );
 

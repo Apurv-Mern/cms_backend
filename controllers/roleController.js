@@ -1,4 +1,5 @@
 const Role = require("../models/role");
+const User = require("../models/user");
 
 const {
   apiSuccessResponse,
@@ -54,6 +55,34 @@ exports.updateRole = async (req, res) => {
     apiSuccessResponse(res, 200, role, "Role updated successfully");
   } catch (error) {
     console.error("Error updating user:", error);
+    apiErrorResponse(res, 500, "Internal server error");
+  }
+};
+
+exports.deleteRole = async (req, res) => {
+  try {
+    const roleId = req.params.id;
+
+    // Check if the role exists
+    const role = await Role.findByPk(roleId);
+    if (!role) {
+      return apiErrorResponse(res, 404, "Role not found");
+    }
+
+    // Check if any users are associated with this role
+    const usersWithRole = await User.findAll({ where: { roleId } });
+
+    if (usersWithRole.length > 0) {
+      // Soft delete users associated with this role
+      await Promise.all(usersWithRole.map((user) => user.destroy()));
+    }
+
+    // Delete the role
+    await role.destroy();
+
+    apiSuccessResponse(res, 200, null, "Role deleted successfully");
+  } catch (error) {
+    console.error("Error deleting role:", error);
     apiErrorResponse(res, 500, "Internal server error");
   }
 };
