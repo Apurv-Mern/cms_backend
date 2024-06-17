@@ -5,21 +5,23 @@ import { Link } from "react-router-dom";
 import { Button } from "@mui/material";
 import useLogout from "../../pages/Auth/Logout";
 import { useSelector } from "react-redux";
-
+import Cookies from "js-cookie";
 const Header = () => {
   const logout = useLogout();
-  // Retrieve the string from local storage
-  const userLocalStorageString = localStorage.getItem("user-details");
+  // Retrieve the string from the cookie
+  const userCookieString = Cookies.get("user-details");
 
   // Parse the string back to an object
-  const userLocalStorageData = JSON.parse(userLocalStorageString);
+  const userCookieData = JSON.parse(userCookieString);
 
   // Extract the name and roleName
-  const { firstName, lastName, roleName } = userLocalStorageData;
+  const { firstName, lastName, roleName } = userCookieData;
+
+  // Format the first name and last name
   const formattedFirstName =
     firstName.charAt(0).toUpperCase() + firstName.slice(1);
   const formattedLastName =
-    lastName.charAt(0).toUpperCase() + lastName.slice(1);
+    lastName && lastName.charAt(0).toUpperCase() + lastName.slice(1);
 
   useEffect(() => {
     const toggleSidebar = () => {
@@ -94,6 +96,19 @@ const Header = () => {
               <li class="menu-item">
                 <Link to={"/admin/roles"} class="menu-link">
                   <div data-i18n="Dashboard">Role</div>
+                </Link>
+              </li>
+            </ul>
+          </li>
+          <li class="menu-item open">
+            <Link to={"#"} class="menu-link">
+              <i class="menu-icon tf-icons ri-home-smile-line"></i>
+              <div data-i18n="Dashboards">Settings</div>
+            </Link>
+            <ul className="menu-sub">
+              <li class="menu-item">
+                <Link to={"/settings"} class="menu-link">
+                  <div data-i18n="Dashboard">setting</div>
                 </Link>
               </li>
             </ul>

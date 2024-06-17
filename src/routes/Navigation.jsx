@@ -11,6 +11,9 @@ import ResetPassword from "../pages/Auth/ResetPassword";
 import DashBoard from "../pages/Dashboard/DashBoard";
 import EditUser from "../pages/Master/User/EditUser/EditUser";
 import Header from "../components/Headers/Headers";
+import Settings from "../pages/Settings/Settings";
+import TokenComponent from "../pages/Auth/Login/Success";
+import Success from "../pages/Auth/Login/Success";
 
 const Navigation = () => {
   const location = useLocation();
@@ -19,11 +22,11 @@ const Navigation = () => {
     location.pathname === "/request-password-reset" ||
     location.pathname.startsWith("/reset-password/");
 
-  useEffect(() => {
-    if (isLoginPage) {
-      window.location.replace("/"); // Redirect to home if on login page
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (isLoginPage) {
+  //     window.location.replace("/"); // Redirect to home if on login page
+  //   }
+  // }, []);
 
   return (
     <>
@@ -35,6 +38,7 @@ const Navigation = () => {
             element={<RequestPasswordReset />}
           />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       ) : (
@@ -45,6 +49,14 @@ const Navigation = () => {
               <div className="content-wrapper">
                 <div className="container-xxl">
                   <Routes>
+                    <Route
+                      path="/success"
+                      element={
+                        <ProtectedRoute>
+                          <Success />
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/admin/roles"
                       element={
@@ -61,6 +73,7 @@ const Navigation = () => {
                         </ProtectedRoute>
                       }
                     />
+
                     <Route
                       path="/users/create"
                       element={
@@ -91,6 +104,15 @@ const Navigation = () => {
                       element={
                         <ProtectedRoute>
                           <DisplayUser />
+                        </ProtectedRoute>
+                      }
+                    />
+
+                    <Route
+                      path="/settings"
+                      element={
+                        <ProtectedRoute>
+                          <Settings />
                         </ProtectedRoute>
                       }
                     />

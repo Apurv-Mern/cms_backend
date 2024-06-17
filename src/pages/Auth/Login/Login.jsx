@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 import logoGoogle from "../../../assets/logoGoogle.svg";
 import logoGithub from "../../../assets/logoGithub.svg";
 import logoFacebook from "../../../assets/logoFacebook.svg";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
@@ -44,7 +44,12 @@ const Login = () => {
       const user = users.find((user) => user.email === data.email);
 
       if (user) {
-        localStorage.setItem("user-details", JSON.stringify(user));
+        // localStorage.setItem("user-details", JSON.stringify(user));
+        // Set the user details in a cookie
+        Cookies.set("user-details", JSON.stringify(user), {
+          expires: 1, // 1 day expiration
+          sameSite: "Strict",
+        });
         // Email exists, check the role
         navigate("/dashboard");
 
@@ -79,13 +84,22 @@ const Login = () => {
     setEmailForReset(emailValue); // Set local state value if needed
   };
   const handleGoogleLogin = () => {
-    window.open("http://localhost:4044/auth/google/callback", "_self");
+    window.open(
+      "http://localhost:4044/api/authentication/auth/google",
+      "_self"
+    );
   };
   const handleGithubLogin = () => {
-    window.open("http://localhost:4044/auth/github/callback", "_self");
+    window.open(
+      "http://localhost:4044/api/authentication/auth/github",
+      "_self"
+    );
   };
   const handleFacebookLogin = () => {
-    window.open("http://localhost:4044/auth/linkedin/callback", "_self");
+    window.open(
+      "http://localhost:4044/api/authentication/auth/facebook",
+      "_self"
+    );
   };
   useEffect(() => {
     // Check if the token exists in cookies
@@ -94,6 +108,7 @@ const Login = () => {
       navigate("/");
     }
   }, [navigate]);
+
   return (
     <div className="containers">
       <div className="login-container">

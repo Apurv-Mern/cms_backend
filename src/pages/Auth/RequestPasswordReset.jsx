@@ -41,7 +41,7 @@ const RequestPasswordReset = () => {
       setEmail(state.email);
       console.log(state.email);
     }
-  }, [location.state]);
+  }, []);
 
   return (
     <div className="divs">
