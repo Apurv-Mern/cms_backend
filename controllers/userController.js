@@ -109,7 +109,6 @@ exports.updateUser = async (req, res) => {
       gender,
       status,
       age,
-
       password: hashedPassword,
     });
 

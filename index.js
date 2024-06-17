@@ -4,10 +4,23 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const PORT = process.env.PORT || 4044;
 const cors = require("cors");
-
 const session = require("express-session");
-const passport = require("./Auth/passportGoogle.js");
+
+const googleAuth = require("./Auth/passportGoogle.js");
+const facebookAuth = require("./Auth/passportFacebook.js");
 const githubAuth = require("./Auth/passportGithub.js");
+
+const User = require("./models/user");
+const Role = require("./models/role");
+
+// const User_Role=require('./models/userRole');
+const userRoutes = require("./routes/user");
+const roleRoutes = require("./routes/role");
+const authRoutes = require("./routes/auth");
+
+const githubRoute = require("./routes/authGithub.js");
+const facebookRoute = require("./routes/authFacebook.js");
+const googleRoute = require("./routes/authGoogle.js");
 
 app.use(cors());
 app.use(cookieParser());
@@ -20,15 +33,6 @@ app.use(
     credentials: true,
   })
 );
-
-const User = require("./models/user");
-const Role = require("./models/role");
-
-// const User_Role=require('./models/userRole');
-
-const userRoutes = require("./routes/user");
-const roleRoutes = require("./routes/role");
-const authRoutes = require("./routes/auth");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -47,13 +51,12 @@ app.get("/", (req, res) => {
 
 // Use user routes
 app.use("/api/user", userRoutes);
-
+// Use role routes
 app.use("/api/role", roleRoutes);
 
 //login
 app.use("/api/auth", authRoutes);
 
-//passport Google
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -64,35 +67,20 @@ app.use(
     },
   })
 );
-app.use(passport.initialize());
-app.use(passport.session());
+//pasport Google
+app.use(googleAuth.initialize());
+app.use(googleAuth.session());
+app.use("/api/authentication", googleRoute);
 
-//passport google routes
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    successRedirect: "http://localhost:3000/dashboard",
-    failureRedirect: "http://localhost:3000/",
-  })
-);
 //passport Github
-
 app.use(githubAuth.initialize());
 app.use(githubAuth.session());
-//Github routes
-app.get("/auth/github", githubAuth.authenticate("github"));
-app.get(
-  "/auth/github/callback",
-  githubAuth.authenticate("github", {
-    successRedirect: "http://localhost:3000/dashboard",
-    failureRedirect: "http://localhost:3000/",
-  })
-);
+app.use("/api/authentication", githubRoute);
+
+// Passport Facebook
+app.use(facebookAuth.initialize());
+app.use(facebookAuth.session());
+app.use("/api/authentication", facebookRoute);
 
 // Start server
 app.listen(PORT, () => {

@@ -58,7 +58,7 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    displayName: {
+    facebookId: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -72,12 +72,6 @@ const User = sequelize.define(
         model: Role,
         key: "roleId",
       },
-
-      // softDelete: {
-      //   type: DataTypes.DATE,
-      //   allowNull: true,
-      //   defaultValue: null, // Setting default value to null makes it soft delete
-      // },
     },
   },
   {

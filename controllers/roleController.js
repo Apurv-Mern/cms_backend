@@ -8,7 +8,7 @@ const {
 
 exports.createRole = async (req, res) => {
   try {
-    const { roleName } = req.body;
+    const { roleName, permissions } = req.body;
 
     // Check if roleName already exists
     const existingRole = await Role.findOne({ where: { roleName } });
@@ -17,7 +17,7 @@ exports.createRole = async (req, res) => {
     }
 
     // If roleName is unique, create the role
-    const role = await Role.create({ roleName });
+    const role = await Role.create({ roleName, permissions });
     apiSuccessResponse(res, 201, role, "Role created successfully");
   } catch (error) {
     console.error("Error creating role:", error);
@@ -74,11 +74,19 @@ exports.deleteRole = async (req, res) => {
 
     if (usersWithRole.length > 0) {
       // Soft delete users associated with this role
-      await Promise.all(usersWithRole.map((user) => user.destroy()));
+      await Promise.all(
+        usersWithRole.map((user) =>
+          User.destroy({ where: { userId: user.userId } })
+        )
+      );
     }
 
     // Delete the role
-    await role.destroy();
+    await role.destroy({
+      where: {
+        roleId,
+      },
+    });
 
     apiSuccessResponse(res, 200, null, "Role deleted successfully");
   } catch (error) {

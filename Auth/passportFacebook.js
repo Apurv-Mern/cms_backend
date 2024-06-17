@@ -1,28 +1,40 @@
 const passport = require("passport");
-const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
-
-const clientId = process.env.GOOGLE_CLIENT_ID;
-const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const { Strategy: FacebookStrategy } = require("passport-facebook");
 const User = require("../models/user");
+
+const clientId = process.env.FACEBOOK_CLIENT_ID;
+const clientSecret = process.env.FACEBOOK_CLIENT_SECRET;
 const jwt = require("jsonwebtoken");
 passport.use(
-  new GoogleStrategy(
+  new FacebookStrategy(
     {
       clientID: clientId,
       clientSecret: clientSecret,
-      callbackURL: "api/authentication/auth/google/callback",
-      scope: ["profile", "email"],
+      callbackURL: "/api/authentication/auth/facebook/callback",
+      profileFields: ["id", "emails", "name"],
+      scope: ["email"],
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log(profile);
       try {
-        let user = await User.findOne({ where: { googleId: profile.id } });
+        console.log(profile);
+        // Check if profile.emails is defined and has at least one email
+        const email =
+          profile.emails && profile.emails.length > 0
+            ? profile.emails[0].value
+            : null;
+
+        if (!email) {
+          // Handle the case where no email is provided
+          return done(new Error("No email found in Facebook profile"), null);
+        }
+
+        let user = await User.findOne({ where: { facebookId: profile.id } });
         if (!user) {
           user = await User.create({
-            googleId: profile.id,
+            facebookId: profile.id,
             firstName: profile.name.givenName,
             lastName: profile.name.familyName,
-            email: profile.emails[0].value,
+            email: profile.emails ? profile.emails[0].value : null,
           });
           await user.save();
         }
