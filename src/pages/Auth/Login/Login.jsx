@@ -84,10 +84,7 @@ const Login = () => {
     setEmailForReset(emailValue); // Set local state value if needed
   };
   const handleGoogleLogin = () => {
-    window.open(
-      "http://localhost:4044/api/authentication/auth/google",
-      "_self"
-    );
+    window.open("http://localhost:4044/auth/google/", "_self");
   };
   const handleGithubLogin = () => {
     window.open(
