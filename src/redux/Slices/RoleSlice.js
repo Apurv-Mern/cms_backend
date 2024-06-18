@@ -47,6 +47,19 @@ export const updateRole = createAsyncThunk(
     }
   }
 );
+// Define a thunk to delete a user
+export const deleteRole = createAsyncThunk(
+  "roles/deleteUser",
+  async (roleId) => {
+    try {
+      await axios.delete(`${baseUrl}/api/role/${roleId}`);
+      return roleId;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 // Create the role slice
 const RoleSlice = createSlice({
   name: "role",
@@ -84,6 +97,15 @@ const RoleSlice = createSlice({
         state.roleCreationStatus = "error";
         state.error = action.error.message;
         state.isCreatingRole = false;
+      })
+
+      //delete roles
+
+      //deleteUser
+      .addCase(deleteRole.fulfilled, (state, action) => {
+        state.roles = state.roles.filter(
+          (role) => role.roleId !== action.payload
+        );
       })
 
       //update role

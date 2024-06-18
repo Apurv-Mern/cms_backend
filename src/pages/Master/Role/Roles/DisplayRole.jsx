@@ -6,6 +6,7 @@ import {
   fetchRoles,
   createRole,
   updateRole,
+  deleteRole,
 } from "../../../../redux/Slices/RoleSlice";
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -16,31 +17,47 @@ import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog";
 import EditRoleModal from "../../../../components/EditRoleModal";
 import { toast } from "react-toastify";
 import CreateRoleModal from "../../../../components/CreateRoleModal";
+
 function DisplayRole() {
   // const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
 
   const [openEditModal, setOpenEditModal] = useState(false);
-
+  const [isLoad, setIsLoad] = useState(false);
   const [editedRoleName, setEditedRoleName] = useState("");
   const [filterTerm, setFilterTerm] = useState("");
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [currentRoleId, setCurrentRoleId] = useState(null);
+  const [selectedRoleId, setSelectedRoleId] = useState(null);
   const roles = useSelector((state) => state.role.roles);
 
   const dispatch = useDispatch();
   console.log("role", roles);
 
-  const handleOpenDialog = (userId) => {
-    // setSelectedUserId(userId);
+  const dispatchDelete = useDispatch();
+  //delete
+  const handleOpenDialog = (roleId) => {
+    setSelectedRoleId(roleId);
     setOpenDialog(true);
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    // setSelectedUserId(null);
+    setSelectedRoleId(null);
   };
 
+  const handleConfirmDelete = () => {
+    dispatchDelete(deleteRole(selectedRoleId))
+      .then(() => {
+        toast.success("User deleted successfully");
+        setIsLoad(true); // Assuming setIsLoad is used to refresh data, adjust as needed
+        handleCloseDialog();
+      })
+      .catch(() => {
+        toast.error("Failed to delete user");
+        handleCloseDialog();
+      });
+  };
   //update
   const handleOpenEditModal = (roleId) => {
     const role = roles.find((role) => role.roleId === roleId);
@@ -75,19 +92,6 @@ function DisplayRole() {
     }
   };
 
-  //delete
-  const handleConfirmDelete = () => {
-    // dispatch(deleteUser(selectedUserId))
-    //   .then(() => {
-    //     toast.success("User deleted successfully");
-    //     // setIsLoad(true); // Assuming setIsLoad is used to refresh data, adjust as needed
-    //     handleCloseDialog();
-    //   })
-    //   .catch(() => {
-    //     toast.error("Failed to delete user");
-    //     handleCloseDialog();
-    //   });
-  };
   const handleClearSearch = () => {
     setFilterTerm("");
   };
@@ -114,6 +118,7 @@ function DisplayRole() {
 
   useEffect(() => {
     dispatch(fetchRoles());
+    setIsLoad(false);
   }, [dispatch]);
   return (
     <>
