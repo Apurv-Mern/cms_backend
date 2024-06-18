@@ -10,11 +10,10 @@ router.get(
 router.get(
   "/auth/facebook/callback",
   passport.authenticate("facebook", {
-    failureRedirect: "http://localhost:3000/",
+    failureRedirect: `${process.env.CLIENT_URL}/`,
     session: false,
   }),
   (req, res) => {
-    console.log("requesttttttttttttttt", req.user);
     const { user, token } = req.user;
     res.cookie("token", token, { httpOnly: false, sameSite: "Strict" });
 
@@ -25,7 +24,7 @@ router.get(
       // httpOnly: true,
     });
 
-    res.redirect("http://localhost:3000/dashboard");
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
   }
 );
 module.exports = router;

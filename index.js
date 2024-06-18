@@ -70,7 +70,7 @@ app.use(
 //pasport Google
 app.use(googleAuth.initialize());
 app.use(googleAuth.session());
-app.use("/api/authentication", googleRoute);
+app.use("/", googleRoute);
 
 //passport Github
 app.use(githubAuth.initialize());
