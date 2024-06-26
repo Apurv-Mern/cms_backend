@@ -12,15 +12,16 @@ const githubAuth = require("./Auth/passportGithub.js");
 
 const User = require("./models/user");
 const Role = require("./models/role");
-
+const Settings = require("./models/settings");
 // const User_Role=require('./models/userRole');
-const userRoutes = require("./routes/user");
-const roleRoutes = require("./routes/role");
-const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/userRoute.js");
+const roleRoutes = require("./routes/roleRoute.js");
+const authRoutes = require("./routes/authLoginRoute.js");
+const settingsRoutes = require("./routes/settingsRoute.js");
 
-const githubRoute = require("./routes/authGithub.js");
-const facebookRoute = require("./routes/authFacebook.js");
-const googleRoute = require("./routes/authGoogle.js");
+const githubRoute = require("./routes/authGithubRoute.js");
+const facebookRoute = require("./routes/authFacebookRoute.js");
+const googleRoute = require("./routes/authGoogleRoute.js");
 
 app.use(cors());
 app.use(cookieParser());
@@ -43,7 +44,13 @@ User.belongsTo(Role, { foreignKey: "roleId" });
 
 User.sync({ alter: true });
 Role.sync();
+Settings.sync({ alter: true });
 
+// // Establish the relationship
+// User_Role.belongsTo(User, { foreignKey: "userId" });
+// User_Role.belongsTo(Role, { foreignKey: "roleId" });
+
+// User_Role.sync({ alter: true });
 // Define routes
 app.get("/", (req, res) => {
   res.send("Hello, World!");
@@ -51,11 +58,15 @@ app.get("/", (req, res) => {
 
 // Use user routes
 app.use("/api/user", userRoutes);
+
 // Use role routes
 app.use("/api/role", roleRoutes);
 
 //login
 app.use("/api/auth", authRoutes);
+
+//settings
+app.use("/api/settings", settingsRoutes);
 
 app.use(
   session({

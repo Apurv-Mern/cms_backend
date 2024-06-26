@@ -32,7 +32,6 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: "Active",
     },
-
     age: {
       type: DataTypes.INTEGER,
       allowNull: true,
