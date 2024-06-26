@@ -14,6 +14,8 @@ import Header from "../components/Headers/Headers";
 import Settings from "../pages/Settings/Settings";
 import TokenComponent from "../pages/Auth/Login/Success";
 import Success from "../pages/Auth/Login/Success";
+import AddSetting from "../pages/Settings/AddSetting";
+import UpdateSetting from "../pages/Settings/UpdateSetting";
 
 const Navigation = () => {
   const location = useLocation();
@@ -49,14 +51,6 @@ const Navigation = () => {
               <div className="content-wrapper">
                 <div className="container-xxl">
                   <Routes>
-                    <Route
-                      path="/success"
-                      element={
-                        <ProtectedRoute>
-                          <Success />
-                        </ProtectedRoute>
-                      }
-                    />
                     <Route
                       path="/admin/roles"
                       element={
@@ -113,6 +107,22 @@ const Navigation = () => {
                       element={
                         <ProtectedRoute>
                           <Settings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/settings/create"
+                      element={
+                        <ProtectedRoute>
+                          <AddSetting />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/settings/update/:settingId"
+                      element={
+                        <ProtectedRoute>
+                          <UpdateSetting />
                         </ProtectedRoute>
                       }
                     />

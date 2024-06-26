@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createUser, fetchRoles } from "../../../../redux/Slices/UserSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import useLogout from "../../../Auth/Logout";
+
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 const AddUser = () => {
   const navigate = useNavigate();
@@ -21,7 +21,6 @@ const AddUser = () => {
   const dispatch = useDispatch();
 
   const isCreatingUser = useSelector((state) => state.user.isCreatingUser);
-  const logout = useLogout();
 
   const onSubmit = async (data) => {
     const result = await dispatch(createUser(data));
