@@ -22,15 +22,17 @@ exports.createSettings = async (req, res) => {
     if (existingSettings) {
       return apiErrorResponse(res, 400, "Settings exists already");
     }
-
-    // Parse options to ensure it is valid JSON
-    // let parsedOptions;
-    // try {
-    //   parsedOptions = JSON.parse(options);
-    // } catch (error) {
-    //   console.log("Invalid JSON format for options:", options);
-    //   return apiErrorResponse(res, 400, "Invalid JSON format for options");
-    // }
+    // Handle options and value appropriately
+    // Handle options
+    let parsedOptions = {};
+    if (options && Object.keys(options).length > 0) {
+      try {
+        parsedOptions = JSON.parse(JSON.stringify(options));
+      } catch (error) {
+        console.log("Invalid JSON format for options:", options);
+        return apiErrorResponse(res, 400, "Invalid JSON format for options");
+      }
+    }
 
     if (!name || !options || !displayName || !type) {
       return apiErrorResponse(res, 400, "Missing required fields");
@@ -40,7 +42,7 @@ exports.createSettings = async (req, res) => {
     const settings = await Settings.create({
       name,
       displayName,
-      options,
+      options: JSON.parse(JSON.stringify(parsedOptions)),
       type,
       value: fileUrl || value || value.toString(),
     });
@@ -66,34 +68,33 @@ exports.updateSettings = async (req, res) => {
     const { name, options, displayName, type, value } = req.body;
     console.log("gjugbijhbjk", req.body);
     const setting = await Settings.findByPk(settingId);
-    let fileUrl;
+
     if (!setting) {
       return apiErrorResponse(res, 404, "Setting not found");
     }
     console.log("heduihwdjksdklsjdlksjmd0", setting);
 
-    // Upload the file if it exists
+    let fileUrl;
     if (req.file) {
-      fileUrl = await upload.uploadFile(req.file.path);
+      fileUrl = await upload.uploadFile(req.file.path); // Upload file and get URL
+      const originalFileName = req.file.originalname; // Get the original filename
+      await setting.update({
+        name: name,
+        displayName: displayName,
+        options: JSON.parse(options),
+        type: type,
+        value: originalFileName,
+      });
+    } else {
+      console.log("originalFileName", options);
+      await setting.update({
+        name: name,
+        displayName: displayName,
+        options: options,
+        type: type,
+        value: value,
+      });
     }
-
-    // // Parse options to ensure it is valid JSON
-    // let parsedOptions;
-    // try {
-    //   parsedOptions = options ? JSON.parse(options) : setting.options;
-    // } catch (error) {
-    //   console.log("Invalid JSON format for options:", options);
-    //   return apiErrorResponse(res, 400, "Invalid JSON format for options");
-    // }
-
-    // Update setting attributes
-    await setting.update({
-      name: name,
-      displayName: displayName,
-      options,
-      type: type,
-      value: fileUrl || value,
-    });
 
     apiSuccessResponse(res, 200, setting, "Setting updated successfully");
   } catch (error) {
