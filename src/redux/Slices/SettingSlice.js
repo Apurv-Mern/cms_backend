@@ -16,6 +16,7 @@ export const fetchSettings = createAsyncThunk(
   async () => {
     try {
       const response = await axios.get(`${baseUrl}/api/settings/`);
+
       return response.data.data;
     } catch (error) {
       throw error;

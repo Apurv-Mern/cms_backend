@@ -1,72 +1,250 @@
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useSelector, useDispatch } from "react-redux";
 import {
   fetchSettings,
   deleteSetting,
+  updateSetting,
 } from "../../redux/Slices/SettingSlice.js";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ConfirmDeleteDialog from "../../components/ConfirmDeleteDialog.jsx";
 import { toast } from "react-toastify";
-const truncateText = (text, maxLength) => {
-  return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
-};
+
 const Settings = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [currentSetting, setCurrentSetting] = useState(null);
-  const [isLoad, setIsLoad] = useState(false);
-  const handleOpenCreateModal = () => {};
+  const [formValues, setFormValues] = useState({});
+  const [fetchTrigger, setFetchTrigger] = useState(false); // State to trigger fetchSettings
+
+  const { handleSubmit, control } = useForm();
   const navigate = useNavigate();
   const settings = useSelector((state) => state.settings.settings);
+  console.log("settings", settings);
   const dispatch = useDispatch();
-  console.log(settings);
 
-  //update settings
+  useEffect(() => {
+    dispatch(fetchSettings());
+    setFetchTrigger(false); // Reset trigger after fetching
+  }, [dispatch, fetchTrigger]);
+
   const handleCreateSetting = () => {
     navigate(`/settings/create`);
   };
-  //update settings
+
   const handleOpenEditModal = (settingId) => {
     navigate(`/settings/update/${settingId}`);
   };
+
   const handleOpenDialog = (settingId) => {
     setCurrentSetting(settingId);
     setOpenDialog(true);
   };
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setCurrentSetting(null);
   };
-  // const handleConfirmDelete = () => {
-  //   dispatch(deleteSetting(currentSetting));
-  //   setOpenDialog(false);
-  // };
-
+  const handleSaveAll = () => {
+    setFetchTrigger(true); // Trigger fetch after updating
+  };
   const handleConfirmDelete = () => {
     dispatch(deleteSetting(currentSetting))
       .then(() => {
-        toast.success("setting deleted successfully");
-        setIsLoad(true); // Assuming setIsLoad is used to refresh data, adjust as needed
-        handleCloseDialog();
+        toast.success("Setting deleted successfully");
+        setFetchTrigger(true); // Trigger fetch after deletion
       })
       .catch(() => {
-        toast.error("Failed to delete user");
+        toast.error("Failed to delete setting");
+      })
+      .finally(() => {
         handleCloseDialog();
       });
   };
 
-  useEffect(() => {
-    dispatch(fetchSettings());
-    setIsLoad(false);
-  }, [dispatch]);
+  const handleInputChange = (settingId, value) => {
+    console.log("setting ki id ", settingId, "aur value", value);
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [settingId]: value,
+    }));
+  };
+
+  const renderCheckboxOptions = (setting) => {
+    return Object.entries(setting.options).map(([key, value]) => (
+      <div key={key} className="form-check">
+        <input
+          type="checkbox"
+          className="form-check-input"
+          id={`checkbox-${setting.settingId}-${key}`}
+          value={key}
+          checked={(setting.value || []).includes(key)}
+          onChange={(e) => {
+            const newValue = e.target.checked
+              ? [...(setting.value || []), key]
+              : (setting.value || []).filter((val) => val !== key);
+            handleInputChange(setting.settingId, JSON.parse(newValue));
+          }}
+        />
+        <label
+          className="form-check-label"
+          htmlFor={`checkbox-${setting.settingId}-${key}`}
+        >
+          {value}
+        </label>
+      </div>
+    ));
+  };
+
+  const renderRadioOptions = (setting) => {
+    return Object.entries(setting.options).map(([key, value]) => (
+      <div key={key} className="form-check">
+        <input
+          type="radio"
+          className="form-check-input"
+          id={`radio-${setting.settingId}-${key}`}
+          name={`radio-${setting.settingId}`}
+          value={key}
+          checked={(setting.value || []).includes(key)}
+          onChange={(e) => handleInputChange(setting.settingId, e.target.value)}
+        />
+        <label
+          className="form-check-label"
+          htmlFor={`radio-${setting.settingId}-${key}`}
+        >
+          {value}
+        </label>
+      </div>
+    ));
+  };
+
+  const renderInputField = (setting) => {
+    switch (setting.type) {
+      case "textarea":
+        return (
+          <Controller
+            key={setting.settingId}
+            name={`value-${setting.settingId}`}
+            control={control}
+            defaultValue={setting.value}
+            render={({ field }) => (
+              <textarea
+                {...field}
+                placeholder="Enter text"
+                className="form-control"
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleInputChange(setting.settingId, e.target.value);
+                }}
+              />
+            )}
+          />
+        );
+      case "checkbox":
+        return (
+          <div key={setting.settingId}>
+            <label>{setting.displayName}</label>
+            {renderCheckboxOptions(setting)}
+          </div>
+        );
+      case "radio":
+        return (
+          <div key={setting.settingId}>
+            <label>{setting.displayName}</label>
+            {renderRadioOptions(setting)}
+          </div>
+        );
+      case "text":
+        return (
+          <Controller
+            key={setting.settingId}
+            name={`value-${setting.settingId}`}
+            control={control}
+            defaultValue={setting.value}
+            render={({ field }) => (
+              <input
+                {...field}
+                type="text"
+                placeholder="Enter text"
+                className="form-control"
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleInputChange(setting.settingId, e.target.value);
+                }}
+              />
+            )}
+          />
+        );
+      case "file":
+        return (
+          <div>
+            <p>Current file:</p>
+            {setting.value && (
+              <a href={setting.value} target="_blank" rel="noopener noreferrer">
+                {setting.value.split("/").pop()}
+              </a>
+            )}
+            <input
+              key={setting.settingId}
+              type="file"
+              className="form-control"
+              onChange={(e) =>
+                handleInputChange(setting.settingId, e.target.files[0].name)
+              }
+            />
+          </div>
+        );
+      default:
+        return (
+          <Controller
+            key={setting.settingId}
+            name={`value-${setting.settingId}`}
+            control={control}
+            defaultValue={setting.value}
+            render={({ field }) => (
+              <input
+                {...field}
+                type="text"
+                placeholder="Enter text"
+                className="form-control"
+              />
+            )}
+          />
+        );
+    }
+  };
+
+  const onSubmit = async () => {
+    try {
+      const updatePromises = settings.map(async (setting) => {
+        const updated = {
+          value: formValues[setting.settingId],
+        };
+        const result = await dispatch(
+          updateSetting({
+            settingId: setting.settingId,
+            settingData: updated,
+          })
+        );
+        return result;
+      });
+
+      await Promise.all(updatePromises);
+      toast.success("All settings updated successfully!");
+      setFetchTrigger(true); // Trigger fetch after updating
+    } catch (error) {
+      toast.error("Failed to update settings.");
+      console.error("Error updating settings:", error);
+    }
+  };
+
   return (
     <>
       <div className="row">
         <div className="col-auto">
-          <h3 class="card-header">Existing Settings</h3>
+          <h3 className="card-header">Existing Settings</h3>
         </div>
         <div className="col ms-auto text-end">
           <button
@@ -85,55 +263,55 @@ const Settings = () => {
               <label>Setting Name</label>
             </div>
           </div>
-
           <div className="col-auto"></div>
         </div>
       </div>
+
       <div className="card-body">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Setting Name</th>
-              <th>Type</th>
-              <th>Options </th>
-
-              <th>Value</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {settings.map((setting) => (
-              <tr key={setting.settingId}>
-                <td>{setting.displayName}</td>
-                <td>{setting.type}</td>
-                <td>{JSON.stringify(setting.options)}</td>
-                <td>
-                  {" "}
-                  <Tooltip title={setting.value}>
-                    <span>{truncateText(setting.value, 30)}</span>
-                  </Tooltip>
-                </td>
-                <td>
-                  <IconButton
-                    aria-label="Edit setting"
-                    title="Edit setting"
-                    onClick={() => handleOpenEditModal(setting.settingId)}
-                  >
-                    <EditIcon style={{ color: "#e3bd3a" }} />
-                  </IconButton>
-
-                  <IconButton
-                    aria-label="Delete setting"
-                    title="Delete setting"
-                    onClick={() => handleOpenDialog(setting.settingId)}
-                  >
-                    <DeleteIcon style={{ color: "#aa1313" }} />
-                  </IconButton>
-                </td>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Setting Name</th>
+                <th>Type</th>
+                <th>Value</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {settings.map((setting) => (
+                <tr key={setting.settingId}>
+                  <td>{setting.name}</td>
+                  <td>{setting.type}</td>
+                  <td>{renderInputField(setting)}</td>
+                  <td>
+                    <IconButton
+                      aria-label="Edit setting"
+                      title="Edit setting"
+                      onClick={() => handleOpenEditModal(setting.settingId)}
+                    >
+                      <EditIcon style={{ color: "#e3bd3a" }} />
+                    </IconButton>
+                    <IconButton
+                      aria-label="Delete setting"
+                      title="Delete setting"
+                      onClick={() => handleOpenDialog(setting.settingId)}
+                    >
+                      <DeleteIcon style={{ color: "#aa1313" }} />
+                    </IconButton>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button
+            type="submit"
+            className="btn btn-dark"
+            onClick={handleSaveAll}
+          >
+            Save All
+          </button>
+        </form>
         <ConfirmDeleteDialog
           open={openDialog}
           handleClose={handleCloseDialog}

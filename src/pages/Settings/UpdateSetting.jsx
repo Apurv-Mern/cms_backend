@@ -63,17 +63,14 @@ const UpdateSettingForm = () => {
     try {
       switch (selectedType) {
         case "radio":
-          value = data.radioOptionsValue;
           type = "radio";
           options = JSON.parse(data.radioOptions);
           break;
         case "textarea":
-          value = data.textarea;
           type = "textarea";
           options = {};
           break;
         case "checkbox":
-          value = data.checkboxOptionValue;
           type = "checkbox";
           options = JSON.parse(data.checkboxOptions);
           break;
@@ -83,19 +80,17 @@ const UpdateSettingForm = () => {
           value = fileContent;
           break;
         case "text":
-          value = data.text;
           type = "text";
           options = {};
           break;
         default:
-          value = "";
           options = {};
       }
 
       const formattedData = {
         name: data.displayName.toLowerCase().replace(/\s+/g, "_"),
         displayName: data.displayName,
-        value,
+
         type,
         options,
       };
@@ -189,32 +184,10 @@ const UpdateSettingForm = () => {
                     {errors.radioOptions.message || "This field is required"}
                   </span>
                 )}
-                <br />
-                <br />
-                <label>Enter the selected option</label>
-                <input
-                  type="text"
-                  id="radioOptionsValue"
-                  placeholder="select an option"
-                  {...register("radioOptionsValue", { required: true })}
-                />
-                {errors.radioOptionsValue && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )}
               </>
             )}
 
-            {selectedType === "textarea" && (
-              <>
-                <label>Write a text area</label>
-                <textarea {...register("textarea", { required: true })} />
-                {errors.textarea && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )}
-                <br />
-                <br />
-              </>
-            )}
+            {selectedType === "textarea" && <></>}
 
             {selectedType === "checkbox" && (
               <>
@@ -240,53 +213,12 @@ const UpdateSettingForm = () => {
                     {errors.checkboxOptions.message || "This field is required"}
                   </span>
                 )}
-                <br />
-                <br />
-                <label>Enter the selected option</label>
-                <input
-                  type="text"
-                  id="checkboxOptionValue"
-                  placeholder="select an option"
-                  {...register("checkboxOptionValue", { required: true })}
-                />
-                {errors.checkboxOptionValue && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )}
               </>
             )}
 
-            {selectedType === "file" && (
-              <>
-                <label>Select a file</label>
-                <input
-                  type="file"
-                  id="fileInput"
-                  placeholder="Choose a file"
-                  {...register("file", { required: true })}
-                />
-                {errors.file && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )}
-                <br />
-                <br />
-              </>
-            )}
+            {selectedType === "file" && <></>}
 
-            {selectedType === "text" && (
-              <>
-                <label>Type a text:</label>
-                <input
-                  type="text"
-                  placeholder="Ex:text"
-                  {...register("text", { required: true })}
-                />
-                {errors.text && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )}
-                <br />
-                <br />
-              </>
-            )}
+            {selectedType === "text" && <></>}
 
             <div className="text-end">
               <button

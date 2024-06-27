@@ -1,76 +1,64 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchSettings, createSetting } from "../../redux/Slices/SettingSlice";
 import { ToastContainer, toast } from "react-toastify";
-
 import { useNavigate } from "react-router-dom";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import "./AddSetting.css"; // Assuming your CSS file is named AddSetting.css
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // Import styles
+import { Controlled as ControlledEditor } from "react-codemirror2";
+import "codemirror/lib/codemirror.css"; // Import the Codemirror CSS
+import "codemirror/theme/material.css"; // Choose your preferred theme
+import "codemirror/mode/javascript/javascript"; // Import the JavaScript mode
 const SettingsForm = () => {
   const navigate = useNavigate();
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm();
   const dispatch = useDispatch();
-  const { settings, loading } = useSelector((state) => state.settings);
+  const { loading } = useSelector((state) => state.settings);
   const [selectedType, setSelectedType] = useState("radio"); // Default to "Radio"
-  const [options, setOptions] = useState({}); // State to store options
 
   useEffect(() => {
     dispatch(fetchSettings());
   }, [dispatch]);
 
   const onSubmit = async (data) => {
-    let value;
-    let type;
-    let options;
-    console.log("datttaaa", data);
-    // console.log("ASDSAD", selectedType);
+    let type = selectedType;
+    let options = {};
+
     switch (selectedType) {
       case "radio":
-        value = data.radioOptionsValue;
-        type = "radio";
-        options = JSON.parse(data.radioOptions);
-        break;
-      case "textarea":
-        value = data.textarea;
-        type = "textarea";
-        options = {};
+        options = JSON.parse(extractPlainText(data[selectedType + "Options"]));
+        console.log("options", options);
         break;
       case "checkbox":
-        value = data.checkboxOptionValue;
-        type = "checkbox";
-        options = JSON.parse(data.checkboxOptions);
+        options = JSON.parse(extractPlainText(data[selectedType + "Options"]));
         break;
       case "file":
         type = "file";
-        options = {};
-        value = JSON.stringify(data.file[0]);
-        console.log("filesssssss", value);
         break;
       case "text":
-        value = data.text;
         type = "text";
-        options = {};
         break;
       default:
-        value = "";
-        options = {};
+        break;
     }
 
-    // Convert display name to lowercase with underscores
     const formattedData = {
       name: data.displayName.toLowerCase().replace(/\s+/g, "_"),
       displayName: data.displayName,
-      value,
+      value: data.value || "",
       type,
       options,
     };
+
     const result = await dispatch(createSetting(formattedData));
 
     if (result.meta.requestStatus === "fulfilled") {
@@ -80,16 +68,15 @@ const SettingsForm = () => {
       toast.error("Failed to create setting.");
     }
   };
-  // const validateJson = (value) => {
-  //   try {
-  //     JSON.parse(value);
-  //     return true;
-  //   } catch (error) {
-  //     return false;
-  //   }
-  // };
+
   const handleSelectChange = (e) => {
     setSelectedType(e.target.value);
+  };
+
+  const extractPlainText = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    return doc.body.textContent || "";
   };
 
   return (
@@ -136,103 +123,84 @@ const SettingsForm = () => {
 
             {selectedType === "radio" && (
               <>
-                <label>Create JSON format for radio options</label>
-                <input
-                  type="text"
-                  id="radioOptions"
-                  placeholder="{ex:'0': 'value1', '1': 'value2'}"
-                  {...register("radioOptions", {
-                    required: true,
-                    // validate: validateJson,
-                  })}
+                <label>
+                  Create JSON format for radio options . Ex:{" "}
+                  {'{ "key1": "value1", "key2": "value2" }'}
+                </label>
+                <Controller
+                  name="radioOptions"
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: "This field is required",
+                  }}
+                  render={({ field }) => (
+                    <>
+                      <ControlledEditor
+                        value={field.value}
+                        onBeforeChange={(editor, data, value) =>
+                          field.onChange(value)
+                        }
+                        placeholder='{"option1": "value1", "option2": "value2", "option3": "value3"}'
+                        options={{
+                          lineWrapping: true, // Enable line wrapping
+                          mode: "javascript", // Set the language mode
+                          theme: "material", // Choose your preferred theme
+                        }}
+                      />
+                      {errors.radioOptions && (
+                        <p style={{ color: "red" }}>
+                          {errors.radioOptions.message}
+                        </p>
+                      )}
+                    </>
+                  )}
                 />
-                {errors.radioOptions && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )}
-                <br />
-                <br />
-                <label>Enter the selected option</label>
-                <input
-                  type="text"
-                  id="values"
-                  placeholder="select a option"
-                  {...register("radioOptionsValue", {})}
-                />
-              </>
-            )}
-
-            {selectedType === "textarea" && (
-              <>
-                <label>Write a text area</label>
-                <textarea {...register("textarea")} />
-                {/* {errors.textarea && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )} */}
-                <br />
-                <br />
               </>
             )}
 
             {selectedType === "checkbox" && (
               <>
-                <label>Create JSON format of options</label>
-                <input
-                  type="text"
-                  id="checkboxOption"
-                  placeholder="{'option1': 'value1', 'option2': 'value2', 'option3': 'value3'}"
-                  {...register("checkboxOptions", {
-                    required: true,
-                    // validate: validateJson,
-                  })}
+                <label>
+                  Create JSON format of options Ex:{" "}
+                  {'{ "key1": "value1", "key2": "value2" ,"key3": "value3"}'}
+                </label>
+                <Controller
+                  name="checkboxOptions"
+                  control={control}
+                  defaultValue=""
+                  rules={{
+                    required: "This field is required",
+                    validate: (value) => {
+                      try {
+                        const plainText = extractPlainText(value);
+                        JSON.parse(plainText);
+                        return true;
+                      } catch (e) {
+                        return "Invalid JSON format";
+                      }
+                    },
+                  }}
+                  render={({ field }) => (
+                    <ControlledEditor
+                      value={field.value}
+                      onBeforeChange={(editor, data, value) =>
+                        field.onChange(value)
+                      }
+                      placeholder='{"option1": "value1", "option2": "value2", "option3": "value3"}'
+                      options={{
+                        lineWrapping: true, // Enable line wrapping
+                        mode: "javascript", // Set the language mode
+                        theme: "material", // Choose your preferred theme
+                      }}
+                    />
+                  )}
                 />
                 {errors.checkboxOptions && (
-                  <span style={{ color: "red" }}>This field is required</span>
+                  <p style={{ color: "red" }}>
+                    {errors.checkboxOptions.message}
+                  </p>
                 )}
-                <br />
-                <br />
-                <label>Enter the selected option</label>
-                <input
-                  type="text"
-                  id="value"
-                  placeholder="select a option"
-                  {...register("checkboxOptionValue", {})}
-                />
-                {/* {errors.checkboxOptionValue && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )} */}
-              </>
-            )}
-
-            {selectedType === "file" && (
-              <>
-                <label>Select a file</label>
-                <input
-                  type="file"
-                  id="fileInput"
-                  placeholder="Choose a file"
-                  {...register("file")}
-                />
-                {/* {errors.file && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )} */}
-                <br />
-                <br />
-              </>
-            )}
-
-            {selectedType === "text" && (
-              <>
-                <label>Type a text:</label>
-                <input
-                  type="text"
-                  placeholder="Ex:text"
-                  {...register("text")}
-                />
-                {/* {errors.text && (
-                  <span style={{ color: "red" }}>This field is required</span>
-                )} */}
-                <br />
-                <br />
               </>
             )}
 
