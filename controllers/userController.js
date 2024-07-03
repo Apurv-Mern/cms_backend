@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const Role = require("../models/role");
+const UserRole = require("../models/userRole");
 const {
   apiSuccessResponse,
   apiErrorResponse,
@@ -48,6 +49,12 @@ exports.createUser = async (req, res) => {
       age,
       roleName,
       password: hashedPassword,
+      roleId,
+    });
+
+    // Create a UserRole entry
+    const userRole = await UserRole.create({
+      userId: user.userId,
       roleId,
     });
 

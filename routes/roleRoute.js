@@ -14,4 +14,7 @@ router.put("/:id", roleController.updateRole);
 //delete /api/roles
 router.delete("/:id", roleController.deleteRole);
 
+// GET /api/rolespermissions
+router.get("/:roleId/permissions", roleController.getRolePermissions);
+
 module.exports = router;

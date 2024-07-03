@@ -75,8 +75,10 @@ exports.updateSettings = async (req, res) => {
     console.log("heduihwdjksdklsjdlksjmd0", setting);
 
     let fileUrl;
+    console.log("fileee hu meh", req);
     if (req.file) {
       fileUrl = await upload.uploadFile(req.file.path); // Upload file and get URL
+      console.log("path", fileUrl);
       const originalFileName = req.file.originalname; // Get the original filename
       await setting.update({
         name: name,
@@ -84,6 +86,7 @@ exports.updateSettings = async (req, res) => {
         options: JSON.parse(options),
         type: type,
         value: originalFileName,
+        pathForFile: fileUrl,
       });
     } else {
       console.log("originalFileName", options);

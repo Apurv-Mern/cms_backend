@@ -30,6 +30,10 @@ const Settings = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    pathForFile: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
   },
 
   {
