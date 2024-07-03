@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import AddUser from "../pages/Master/User/AddUser/AddUser";
+import AddUser from "../pages/Master/User/AddUser";
 import Login from "../pages/Auth/Login/Login";
-import Roles from "../pages/Master/Role/Roles/DisplayRole";
-import DisplayUser from "../pages/Master/User/DisplayUser/DisplayUser";
+import Roles from "../pages/Master/Role/DisplayRole";
+import DisplayUser from "../pages/Master/User/DisplayUser";
 import NotFound from "../components/NotFound";
 import ProtectedRoute from "../components/ProtectedRoutes";
 import RequestPasswordReset from "../pages/Auth/RequestPasswordReset";
 import ResetPassword from "../pages/Auth/ResetPassword";
 import DashBoard from "../pages/Dashboard/DashBoard";
-import EditUser from "../pages/Master/User/EditUser/EditUser";
+import EditUser from "../pages/Master/User/EditUser";
 import Header from "../components/Headers/Headers";
 import Settings from "../pages/Settings/Settings";
-import TokenComponent from "../pages/Auth/Login/Success";
-import Success from "../pages/Auth/Login/Success";
+
+import EditRole from "../pages/Master/Role/EditRole";
 import AddSetting from "../pages/Settings/AddSetting";
 import UpdateSetting from "../pages/Settings/UpdateSetting";
 
@@ -59,6 +59,15 @@ const Navigation = () => {
                         </ProtectedRoute>
                       }
                     />
+
+                    <Route
+                      path="update/role/:roleId"
+                      element={
+                        <ProtectedRoute>
+                          <EditRole />
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/dashboard"
                       element={
@@ -86,15 +95,6 @@ const Navigation = () => {
                     />
                     <Route
                       path="/admin/users"
-                      element={
-                        <ProtectedRoute>
-                          <DisplayUser />
-                        </ProtectedRoute>
-                      }
-                    />
-
-                    <Route
-                      path="/admin"
                       element={
                         <ProtectedRoute>
                           <DisplayUser />

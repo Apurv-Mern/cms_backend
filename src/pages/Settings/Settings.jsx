@@ -144,18 +144,10 @@ const Settings = () => {
         );
       case "checkbox":
         return (
-          <div key={setting.settingId}>
-            <label>{setting.displayName}</label>
-            {renderCheckboxOptions(setting)}
-          </div>
+          <div key={setting.settingId}>{renderCheckboxOptions(setting)}</div>
         );
       case "radio":
-        return (
-          <div key={setting.settingId}>
-            <label>{setting.displayName}</label>
-            {renderRadioOptions(setting)}
-          </div>
-        );
+        return <div key={setting.settingId}>{renderRadioOptions(setting)}</div>;
       case "text":
         return (
           <Controller
@@ -180,9 +172,12 @@ const Settings = () => {
       case "file":
         return (
           <div>
-            <p>Current file:</p>
             {setting.value && (
-              <a href={setting.value} target="_blank" rel="noopener noreferrer">
+              <a
+                href={setting.pathForFile}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {setting.value.split("/").pop()}
               </a>
             )}

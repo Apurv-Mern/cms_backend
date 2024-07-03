@@ -7,33 +7,30 @@ import {
   createRole,
   updateRole,
   deleteRole,
-} from "../../../../redux/Slices/RoleSlice";
+} from "../../../redux/Slices/RoleSlice";
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CreateRoleModal from "../../../components/CreateRoleModal";
+import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
 
-import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog";
-
-import EditRoleModal from "../../../../components/EditRoleModal";
 import { toast } from "react-toastify";
-import CreateRoleModal from "../../../../components/CreateRoleModal";
+import { useNavigate } from "react-router-dom";
 
 function DisplayRole() {
   // const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-
-  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openCreateModal, setOpenCreateModal] = useState(false); // State for opening/closing create role modal
   const [isLoad, setIsLoad] = useState(false);
-  const [editedRoleName, setEditedRoleName] = useState("");
+
   const [filterTerm, setFilterTerm] = useState("");
-  const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [currentRoleId, setCurrentRoleId] = useState(null);
+
   const [selectedRoleId, setSelectedRoleId] = useState(null);
   const roles = useSelector((state) => state.role.roles);
 
   const dispatch = useDispatch();
   console.log("role", roles);
-
+  const navigate = useNavigate();
   const dispatchDelete = useDispatch();
   //delete
   const handleOpenDialog = (roleId) => {
@@ -45,7 +42,20 @@ function DisplayRole() {
     setOpenDialog(false);
     setSelectedRoleId(null);
   };
+  const handleCreateRole = (roleName) => {
+    dispatch(createRole({ roleName }))
+      .then(() => {
+        setIsLoad(true); // Assuming setIsLoad is used to refresh data, adjust as needed
+        setOpenCreateModal(false);
+      })
+      .catch(() => {
+        toast.error("Failed to create role");
+      });
+  };
 
+  const filteredRoles = roles.filter((role) =>
+    role.roleName.toLowerCase().includes(filterTerm.toLowerCase())
+  );
   const handleConfirmDelete = () => {
     dispatchDelete(deleteRole(selectedRoleId))
       .then(() => {
@@ -59,37 +69,9 @@ function DisplayRole() {
       });
   };
   //update
-  const handleOpenEditModal = (roleId) => {
-    const role = roles.find((role) => role.roleId === roleId);
-    if (role) {
-      setCurrentRoleId(roleId);
-      setEditedRoleName(role.roleName);
-      setOpenEditModal(true);
-    }
-  };
-  const handleCloseEditModal = () => {
-    setOpenEditModal(false);
-    setCurrentRoleId(null);
-  };
-  const handleUpdateRoleName = async () => {
-    try {
-      const result = await dispatch(
-        updateRole({
-          roleId: currentRoleId,
-          roleData: { roleName: editedRoleName },
-        })
-      );
-      if (result.meta.requestStatus === "fulfilled") {
-        toast.success("Role updated successfully!");
-      } else {
-        toast.error("Failed to update role.");
-      }
-    } catch (error) {
-      console.error("Error updating role:", error);
-      toast.error("An error occurred while updating the role.");
-    } finally {
-      handleCloseEditModal();
-    }
+
+  const handleUpdateRole = async (roleId) => {
+    navigate(`/update/role/${roleId}`);
   };
 
   const handleClearSearch = () => {
@@ -97,24 +79,9 @@ function DisplayRole() {
   };
   //createRole
 
-  const handleOpenCreateModal = () => {
-    setOpenCreateModal(true);
-  };
-
-  const handleCloseCreateModal = () => {
-    setOpenCreateModal(false);
-  };
-
-  const handleCreateRole = async (roleName) => {
-    if (roleName) {
-      await dispatch(createRole({ roleName }));
-      setOpenCreateModal(false);
-    }
-  };
-
-  const filteredRoles = roles.filter((role) =>
-    role.roleName.toLowerCase().includes(filterTerm.toLowerCase())
-  );
+  // const filteredRoles = roles.filter((role) =>
+  //   role.roleName.toLowerCase().includes(filterTerm.toLowerCase())
+  // );
 
   useEffect(() => {
     dispatch(fetchRoles());
@@ -129,7 +96,7 @@ function DisplayRole() {
         <div className="col ms-auto text-end">
           <button
             className="btn btn-dark waves-effect waves-light"
-            onClick={handleOpenCreateModal}
+            onClick={() => setOpenCreateModal(true)} // Open the create role modal
           >
             Create New Role
           </button>
@@ -177,7 +144,7 @@ function DisplayRole() {
                   <IconButton
                     aria-label="Edit user"
                     title="Edit User"
-                    onClick={() => handleOpenEditModal(role.roleId)}
+                    onClick={() => handleUpdateRole(role.roleId)}
                   >
                     <EditIcon style={{ color: "#e3bd3a" }} />
                   </IconButton>
@@ -199,16 +166,9 @@ function DisplayRole() {
           handleClose={handleCloseDialog}
           handleConfirm={handleConfirmDelete}
         />
-        <EditRoleModal
-          open={openEditModal}
-          handleClose={handleCloseEditModal}
-          roleName={editedRoleName}
-          setRoleName={setEditedRoleName}
-          handleUpdate={handleUpdateRoleName}
-        />
         <CreateRoleModal
           open={openCreateModal}
-          handleClose={handleCloseCreateModal}
+          handleClose={() => setOpenCreateModal(false)}
           handleCreate={handleCreateRole}
         />
       </div>

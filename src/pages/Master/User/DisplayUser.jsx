@@ -6,11 +6,11 @@ import {
   fetchUsers,
   fetchRoles,
   deleteUser,
-} from "../../../../redux/Slices/UserSlice";
+} from "../../../redux/Slices/UserSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import ConfirmDeleteDialog from "../../../../components/ConfirmDeleteDialog";
+import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
 
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";

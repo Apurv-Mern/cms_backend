@@ -6,6 +6,7 @@ const initialState = {
   roles: [],
   loading: false,
   error: null,
+  rolePermissions: [],
   isCreatingRole: false,
   roleCreationStatus: null,
 };
@@ -19,6 +20,20 @@ export const fetchRoles = createAsyncThunk("role/fetchRoles", async () => {
     throw error;
   }
 });
+// Define a thunk to fetch roles from the API
+export const fetchRolePermissions = createAsyncThunk(
+  "role/fetchRolePermissions",
+  async (roleId) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/api/role/${roleId}/permissions`
+      );
+      return response.data.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
 
 // Define a thunk to create a new role
 export const createRole = createAsyncThunk(
@@ -119,6 +134,21 @@ const RoleSlice = createSlice({
         }
       })
       .addCase(updateRole.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+
+      //fetch role based permissions
+      .addCase(fetchRolePermissions.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchRolePermissions.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.rolePermissions = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchRolePermissions.rejected, (state, action) => {
+        state.status = "failed";
         state.error = action.payload;
       });
   },

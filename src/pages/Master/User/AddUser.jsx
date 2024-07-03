@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { createUser, fetchRoles } from "../../../../redux/Slices/UserSlice";
+import { createUser, fetchRoles } from "../../../redux/Slices/UserSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 

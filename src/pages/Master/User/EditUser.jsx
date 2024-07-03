@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateUser, fetchUserData } from "../../../../redux/Slices/UserSlice"; // Ensure this is the correct path to your thunk
+import { updateUser, fetchUserData } from "../../../redux/Slices/UserSlice"; // Ensure this is the correct path to your thunk
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 const EditUser = () => {
