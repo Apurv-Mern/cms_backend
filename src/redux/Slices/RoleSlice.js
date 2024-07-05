@@ -144,12 +144,10 @@ const RoleSlice = createSlice({
       .addCase(fetchRolePermissions.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.rolePermissions = action.payload;
-        state.loading = false;
-        state.error = null;
       })
       .addCase(fetchRolePermissions.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload;
+        state.error = action.error.message;
       });
   },
 });

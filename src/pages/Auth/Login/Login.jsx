@@ -44,7 +44,6 @@ const Login = () => {
       const user = users.find((user) => user.email === data.email);
 
       if (user) {
-        // localStorage.setItem("user-details", JSON.stringify(user));
         // Set the user details in a cookie
         Cookies.set("user-details", JSON.stringify(user), {
           expires: 1, // 1 day expiration
@@ -52,15 +51,6 @@ const Login = () => {
         });
         // Email exists, check the role
         navigate("/dashboard");
-
-        // if (user.roleName === "user") {
-
-        //   navigate("/users/create");
-        // } else if (user.roleName === "admin") {
-        //   navigate("/admin/users");
-        // } else if (user.roleName === "manager") {
-        //   navigate("/admin/users");
-        // }
       } else {
         setLoginError("user does not exist");
         toast.error("User does not exist");

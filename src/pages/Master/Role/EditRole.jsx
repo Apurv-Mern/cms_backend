@@ -18,7 +18,7 @@ const EditRolePage = () => {
   const roles = useSelector((state) => state.role.roles);
   const role = roles.find((role) => role.roleId === parseInt(roleId));
   const rolesPermissions = useSelector((state) => state.role.rolePermissions);
-
+  console.log("role", role);
   console.log("roleeeeeeeeeeeeeepermissions", rolesPermissions);
   const [roleName, setRoleName] = useState("");
   const [rolePermissions, setRolePermissions] = useState({});
@@ -30,25 +30,18 @@ const EditRolePage = () => {
   console.log("selectedPermissions", selectedPermissions);
 
   useEffect(() => {
+    dispatch(fetchRolePermissions(role.roleId));
+  }, [role.roleId, dispatch]);
+
+  useEffect(() => {
     if (!permissions.length) {
       dispatch(fetchPermissions());
     }
 
     if (role) {
       setRoleName(role.roleName);
-      const permissionsMap = (role.permissions || []).reduce((map, perm) => {
-        map[perm.permissionName] = true;
-        return map;
-      }, {});
-      setRolePermissions(permissionsMap);
-      setSelectedPermissions({
-        roleId: roleId,
-        permissions: Object.keys(permissionsMap).filter(
-          (permName) => permissionsMap[permName]
-        ),
-      });
     }
-  }, [dispatch, permissions, role, roleId]);
+  }, [dispatch, permissions, role]);
 
   useEffect(() => {
     // Update selected permissions whenever rolePermissions changes

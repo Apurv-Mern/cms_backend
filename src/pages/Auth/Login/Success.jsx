@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const Success = () => {
-  const navigate = useNavigate();
   const fetchUser = async () => {
     try {
       const response = await axios.get(

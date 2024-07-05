@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchRoles,
   createRole,
-  updateRole,
   deleteRole,
 } from "../../../redux/Slices/RoleSlice";
 import { IconButton } from "@mui/material";
@@ -22,16 +21,16 @@ function DisplayRole() {
   const [openDialog, setOpenDialog] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false); // State for opening/closing create role modal
   const [isLoad, setIsLoad] = useState(false);
-
   const [filterTerm, setFilterTerm] = useState("");
-
   const [selectedRoleId, setSelectedRoleId] = useState(null);
-  const roles = useSelector((state) => state.role.roles);
 
-  const dispatch = useDispatch();
-  console.log("role", roles);
   const navigate = useNavigate();
+  const roles = useSelector((state) => state.role.roles);
   const dispatchDelete = useDispatch();
+  const dispatch = useDispatch();
+
+  console.log("role", roles);
+
   //delete
   const handleOpenDialog = (roleId) => {
     setSelectedRoleId(roleId);
