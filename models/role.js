@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("./connection");
 
 const Role = sequelize.define(
-  "role",
+  "Role",
   {
     roleId: {
       type: DataTypes.INTEGER,
@@ -32,10 +32,9 @@ const Role = sequelize.define(
 
   {
     tableName: "roles",
-    createdAt: true,
     paranoid: true,
     updatedAt: true,
-
+    createdAt: true,
     deletedAt: "deletedAt",
   }
 );

@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("./connection");
-
+const Role = require("./role");
+const Permissions = require("./permissions");
 const RolePermission = sequelize.define(
   "rolesPermissions",
   {
@@ -25,5 +26,15 @@ const RolePermission = sequelize.define(
     deletedAt: "deletedAt",
   }
 );
+// // Role and Permissions association through RolesPermissions
+// Role.belongsToMany(Permissions, {
+//   through: RolePermission,
+//   foreignKey: "roleId",
+// });
+
+// Permissions.belongsToMany(Role, {
+//   through: RolePermission,
+//   foreignKey: "permissionId",
+// });
 
 module.exports = RolePermission;

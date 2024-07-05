@@ -49,11 +49,27 @@ User.belongsTo(Role, { foreignKey: "roleId" });
 UserRole.belongsTo(User, { foreignKey: "userId" });
 UserRole.belongsTo(Role, { foreignKey: "roleId" });
 
-Role.hasMany(Permissions, { foreignKey: "roleId" });
-Permissions.belongsTo(Role, { foreignKey: "roleId" });
+// Role.hasMany(Permissions, { foreignKey: "roleId" });
+// Permissions.belongsTo(Role, { foreignKey: "roleId" });
+
+// RolesPermissions.belongsTo(Role, { foreignKey: "roleId" });
+// RolesPermissions.belongsTo(Permissions, { foreignKey: "permissionId" });
+
+// Define associations
+Role.belongsToMany(Permissions, {
+  through: RolesPermissions,
+  foreignKey: "roleId",
+});
+Permissions.belongsToMany(Role, {
+  through: RolesPermissions,
+  foreignKey: "permissionId",
+});
 
 RolesPermissions.belongsTo(Role, { foreignKey: "roleId" });
 RolesPermissions.belongsTo(Permissions, { foreignKey: "permissionId" });
+
+// Role.hasMany(RolesPermissions, { foreignKey: "roleId" });
+// Permissions.hasMany(RolesPermissions, { foreignKey: "permissionId" });
 
 // Function to sync models with retry logic
 const retryTransaction = async (transactionFn, maxRetries = 5) => {
@@ -118,7 +134,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      secure: false, // Set to true if using HTTPS
+      secure: true, // Set to true if using HTTPS
     },
   })
 );

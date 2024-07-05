@@ -1,7 +1,7 @@
-const Role = require("../models/role");
 const User = require("../models/user");
 const Permission = require("../models/permissions");
 const RolePermission = require("../models/rolespermissions");
+const Role = require("../models/role");
 const {
   apiSuccessResponse,
   apiErrorResponse,
@@ -42,9 +42,12 @@ exports.createRole = async (req, res) => {
 
 exports.getRoles = async (req, res) => {
   try {
+    console.log("Fetching roles from the database...");
+
     // Fetch all roles from the database
     const roles = await Role.findAll();
 
+    // console.log("Roles fetched successfully:", roles);
     apiSuccessResponse(res, 200, roles, "Roles fetched successfully");
   } catch (error) {
     console.error("Error fetching roles:", error);

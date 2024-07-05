@@ -32,7 +32,7 @@ exports.login = async (req, res) => {
     }
 
     // If user and password are correct, create and return JWT token
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.userId }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -41,6 +41,7 @@ exports.login = async (req, res) => {
       httpOnly: true,
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
     });
 
     // Send success response
