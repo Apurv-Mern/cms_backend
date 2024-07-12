@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../api/baseurl";
-
+import apiClient from "../../api/baseurl";
 // Define the initial state
 const initialState = {
   users: [],
@@ -21,7 +21,7 @@ const initialState = {
 export const fetchUserData = createAsyncThunk(
   "users/fetchUserData",
   async (userId) => {
-    const response = await axios.get(`${baseUrl}/api/user/${userId}`);
+    const response = await apiClient.get(`${baseUrl}/api/user/${userId}`);
     return response.data;
   }
 );
@@ -31,7 +31,7 @@ export const createUser = createAsyncThunk(
   "users/createUser",
   async (userData) => {
     try {
-      const response = await axios.post(`${baseUrl}/api/user/`, userData);
+      const response = await apiClient.post(`${baseUrl}/api/user/`, userData);
       return response.data;
     } catch (error) {
       throw error;
@@ -42,7 +42,7 @@ export const createUser = createAsyncThunk(
 // Define a thunk to fetch users from the API
 export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
   try {
-    const response = await axios.get(`${baseUrl}/api/user/`);
+    const response = await apiClient.get(`${baseUrl}/api/user/`);
     return response.data.data;
   } catch (error) {
     throw error;
@@ -51,7 +51,7 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
 // Define a thunk to fetch roles from the API
 export const fetchRoles = createAsyncThunk("user/fetchRoles", async () => {
   try {
-    const response = await axios.get(`${baseUrl}/api/role/`);
+    const response = await apiClient.get(`${baseUrl}/api/role/`);
     return response.data.data;
   } catch (error) {
     throw error;
@@ -63,7 +63,7 @@ export const updateUser = createAsyncThunk(
   "users/updateUser",
   async ({ userId, userData }, { dispatch }) => {
     try {
-      const response = await axios.put(
+      const response = await apiClient.put(
         `${baseUrl}/api/user/${userId}`,
         userData
       );
@@ -79,7 +79,7 @@ export const deleteUser = createAsyncThunk(
   "users/deleteUser",
   async (userId) => {
     try {
-      await axios.delete(`${baseUrl}/api/user/${userId}`);
+      await apiClient.delete(`${baseUrl}/api/user/${userId}`);
       return userId;
     } catch (error) {
       throw error;

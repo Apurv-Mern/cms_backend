@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../api/baseurl";
-
+import apiClient from "../../api/baseurl";
 const initialState = {
   roles: [],
   loading: false,
@@ -14,7 +14,7 @@ const initialState = {
 // Define a thunk to fetch roles from the API
 export const fetchRoles = createAsyncThunk("role/fetchRoles", async () => {
   try {
-    const response = await axios.get(`${baseUrl}/api/role/`);
+    const response = await apiClient(`${baseUrl}/api/role/`);
     return response.data.data;
   } catch (error) {
     throw error;
@@ -26,7 +26,7 @@ export const fetchRolePermissions = createAsyncThunk(
   async (roleId) => {
     try {
       const response = await axios.get(
-        `${baseUrl}/api/role/${roleId}/permissions`
+        `${baseUrl}/api/rolePermission/${roleId}/permissions`
       );
       return response.data.data;
     } catch (error) {
@@ -40,7 +40,7 @@ export const createRole = createAsyncThunk(
   "role/createRole",
   async (roleData) => {
     try {
-      const response = await axios.post(`${baseUrl}/api/role/`, roleData);
+      const response = await apiClient.post(`${baseUrl}/api/role/`, roleData);
       return response.data.data; // Assuming the response contains the created role in `data.data`
     } catch (error) {
       throw error;
@@ -52,7 +52,7 @@ export const updateRole = createAsyncThunk(
   "roles/updateUser",
   async ({ roleId, roleData }, { dispatch }) => {
     try {
-      const response = await axios.put(
+      const response = await apiClient.put(
         `${baseUrl}/api/role/${roleId}`,
         roleData
       );
@@ -67,7 +67,7 @@ export const deleteRole = createAsyncThunk(
   "roles/deleteUser",
   async (roleId) => {
     try {
-      await axios.delete(`${baseUrl}/api/role/${roleId}`);
+      await apiClient.delete(`${baseUrl}/api/role/${roleId}`);
       return roleId;
     } catch (error) {
       throw error;

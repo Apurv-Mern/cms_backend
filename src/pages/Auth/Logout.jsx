@@ -5,8 +5,7 @@ const useLogout = () => {
   const navigate = useNavigate();
 
   const logout = () => {
-    localStorage.removeItem("user-details");
-    Cookies.remove("token");
+    localStorage.removeItem("token");
     Cookies.remove("user-details");
     navigate("/");
   };

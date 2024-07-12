@@ -9,14 +9,17 @@ import {
 } from "../../../redux/Slices/UserSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { fetchRolePermissions } from "../../../redux/Slices/RoleSlice";
 import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
-
+import {
+  setPermissionNames,
+  selectPermissionNames,
+} from "../../../redux/Slices/PermissionSlice";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import TablePagination from "@mui/material/TablePagination";
-
+import Cookies from "js-cookie";
 const DisplayUser = () => {
   const [isLoad, setIsLoad] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -36,7 +39,8 @@ const DisplayUser = () => {
 
   const users = useSelector((state) => state.user.users);
   const roles = useSelector((state) => state.user.roles);
-
+  const rolePermission = useSelector((state) => state.role.rolePermissions);
+  console.log("role ki permission  display user see ", rolePermission);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleClickCreate = () => {
@@ -131,7 +135,46 @@ const DisplayUser = () => {
     setIsLoad(false);
   }, [filteredUsers, users]);
   //filtering
+  useEffect(() => {
+    // Retrieve the string from the cookie
+    const userCookieString = Cookies.get("user-details");
+    if (userCookieString) {
+      try {
+        const userCookieData = JSON.parse(userCookieString);
 
+        const { roleId = "" } = userCookieData || {};
+        dispatch(fetchRolePermissions(roleId));
+
+        console.log("role id   userrrrrr meeh se ", roleId);
+      } catch (error) {
+        console.error("Error parsing user details cookie:", error);
+      }
+    } else {
+      console.log("User details cookie is not set.");
+    }
+  }, [dispatch]);
+  useEffect(() => {
+    if (rolePermission.length > 0) {
+      dispatch(setPermissionNames(rolePermission));
+    }
+  }, [dispatch, rolePermission]);
+
+  const permissionNames = useSelector(selectPermissionNames) || [];
+
+  console.log("permissionNames", permissionNames);
+
+  const hasUserEdit = permissionNames.includes("user_edit");
+  const hasUserDelete = permissionNames.includes("user_delete");
+  const hasUserCreate = permissionNames.includes("user_add");
+
+  console.log(
+    "editt5ttt",
+    hasUserEdit,
+    "deleteeeeeen  ",
+    hasUserDelete,
+    "createeeerw ",
+    hasUserCreate
+  );
   return (
     <>
       <div className="row">
@@ -139,12 +182,14 @@ const DisplayUser = () => {
           <h3 class="card-header">Existing Users</h3>
         </div>
         <div className="col ms-auto text-end">
-          <button
-            className="btn btn-dark waves-effect waves-light"
-            onClick={handleClickCreate}
-          >
-            Create New User
-          </button>
+          {hasUserCreate && (
+            <button
+              className="btn btn-dark waves-effect waves-light"
+              onClick={handleClickCreate}
+            >
+              Create New User
+            </button>
+          )}
         </div>
       </div>
 
@@ -249,7 +294,7 @@ const DisplayUser = () => {
               <th>Status</th>
               <th>Age</th>
               <th>Role</th>
-              <th>Actions</th>
+              {(hasUserEdit || hasUserDelete) && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -268,21 +313,24 @@ const DisplayUser = () => {
 
                   <td>{user.roleName}</td>
                   <td>
-                    <IconButton
-                      aria-label="Edit user"
-                      title="Edit User"
-                      onClick={() => handleUpdateUser(user.userId)}
-                    >
-                      <EditIcon style={{ color: "#e3bd3a" }} />
-                    </IconButton>
-
-                    <IconButton
-                      aria-label="Delete user"
-                      title="Delete User"
-                      onClick={() => handleOpenDialog(user.userId)}
-                    >
-                      <DeleteIcon style={{ color: "#aa1313" }} />
-                    </IconButton>
+                    {hasUserEdit && (
+                      <IconButton
+                        aria-label="Edit user"
+                        title="Edit User"
+                        onClick={() => handleUpdateUser(user.userId)}
+                      >
+                        <EditIcon style={{ color: "#e3bd3a" }} />
+                      </IconButton>
+                    )}
+                    {hasUserDelete && (
+                      <IconButton
+                        aria-label="Delete user"
+                        title="Delete User"
+                        onClick={() => handleOpenDialog(user.userId)}
+                      >
+                        <DeleteIcon style={{ color: "#aa1313" }} />
+                      </IconButton>
+                    )}
                   </td>
                 </tr>
               ))}

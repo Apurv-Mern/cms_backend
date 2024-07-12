@@ -12,7 +12,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteDialog from "../../components/ConfirmDeleteDialog.jsx";
 import { toast } from "react-toastify";
-
+import {
+  setPermissionNames,
+  selectPermissionNames,
+} from "../../redux/Slices/PermissionSlice.js";
+import { fetchRolePermissions } from "../../redux/Slices/RoleSlice";
+import Cookies from "js-cookie";
 const Settings = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [currentSetting, setCurrentSetting] = useState(null);
@@ -22,7 +27,10 @@ const Settings = () => {
   const { handleSubmit, control } = useForm();
   const navigate = useNavigate();
   const settings = useSelector((state) => state.settings.settings);
+
   console.log("settings", settings);
+  const rolePermission = useSelector((state) => state.role.rolePermissions);
+  console.log("role ki permission  display user see ", rolePermission);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -234,7 +242,46 @@ const Settings = () => {
       console.error("Error updating settings:", error);
     }
   };
+  useEffect(() => {
+    // Retrieve the string from the cookie
+    const userCookieString = Cookies.get("user-details");
+    if (userCookieString) {
+      try {
+        const userCookieData = JSON.parse(userCookieString);
 
+        const { roleId = "" } = userCookieData || {};
+        dispatch(fetchRolePermissions(roleId));
+
+        console.log("role id   userrrrrr meeh se ", roleId);
+      } catch (error) {
+        console.error("Error parsing user details cookie:", error);
+      }
+    } else {
+      console.log("User details cookie is not set.");
+    }
+  }, [dispatch]);
+  useEffect(() => {
+    if (rolePermission.length > 0) {
+      dispatch(setPermissionNames(rolePermission));
+    }
+  }, [dispatch, rolePermission]);
+
+  const permissionNames = useSelector(selectPermissionNames) || [];
+
+  console.log("permissionNames", permissionNames);
+
+  const hasSettingEdit = permissionNames.includes("settings_edit");
+  const hasSettingDelete = permissionNames.includes("settings_delete");
+  const hasSettingCreate = permissionNames.includes("settings_add");
+
+  console.log(
+    "editt5ttt seeetingggg",
+    hasSettingEdit,
+    "deleteeeeeen seeetingggg  ",
+    hasSettingDelete,
+    "createeeerw seeetingggg  ",
+    hasSettingCreate
+  );
   return (
     <>
       <div className="row">
@@ -270,7 +317,7 @@ const Settings = () => {
                 <th>Setting Name</th>
                 <th>Type</th>
                 <th>Value</th>
-                <th>Actions</th>
+                {(hasSettingDelete || hasSettingEdit) && <th>Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -280,20 +327,24 @@ const Settings = () => {
                   <td>{setting.type}</td>
                   <td>{renderInputField(setting)}</td>
                   <td>
-                    <IconButton
-                      aria-label="Edit setting"
-                      title="Edit setting"
-                      onClick={() => handleOpenEditModal(setting.settingId)}
-                    >
-                      <EditIcon style={{ color: "#e3bd3a" }} />
-                    </IconButton>
-                    <IconButton
-                      aria-label="Delete setting"
-                      title="Delete setting"
-                      onClick={() => handleOpenDialog(setting.settingId)}
-                    >
-                      <DeleteIcon style={{ color: "#aa1313" }} />
-                    </IconButton>
+                    {hasSettingEdit && (
+                      <IconButton
+                        aria-label="Edit setting"
+                        title="Edit setting"
+                        onClick={() => handleOpenEditModal(setting.settingId)}
+                      >
+                        <EditIcon style={{ color: "#e3bd3a" }} />
+                      </IconButton>
+                    )}
+                    {hasSettingDelete && (
+                      <IconButton
+                        aria-label="Delete setting"
+                        title="Delete setting"
+                        onClick={() => handleOpenDialog(setting.settingId)}
+                      >
+                        <DeleteIcon style={{ color: "#aa1313" }} />
+                      </IconButton>
+                    )}
                   </td>
                 </tr>
               ))}

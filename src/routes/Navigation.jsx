@@ -8,7 +8,7 @@ import NotFound from "../components/NotFound";
 import ProtectedRoute from "../components/ProtectedRoutes";
 import RequestPasswordReset from "../pages/Auth/RequestPasswordReset";
 import ResetPassword from "../pages/Auth/ResetPassword";
-import DashBoard from "../pages/Dashboard/DashBoard";
+
 import EditUser from "../pages/Master/User/EditUser";
 import Header from "../components/Headers/Headers";
 import Settings from "../pages/Settings/Settings";
@@ -65,14 +65,6 @@ const Navigation = () => {
                       element={
                         <ProtectedRoute>
                           <EditRole />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/dashboard"
-                      element={
-                        <ProtectedRoute>
-                          <DashBoard />
                         </ProtectedRoute>
                       }
                     />

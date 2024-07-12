@@ -30,8 +30,8 @@ const EditRolePage = () => {
   console.log("selectedPermissions", selectedPermissions);
 
   useEffect(() => {
-    dispatch(fetchRolePermissions(role.roleId));
-  }, [role.roleId, dispatch]);
+    dispatch(fetchRolePermissions(role?.roleId));
+  }, [role?.roleId, dispatch]);
 
   useEffect(() => {
     if (!permissions.length) {

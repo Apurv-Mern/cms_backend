@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { baseUrl } from "../../api/baseurl";
-
+import apiClient from "../../api/baseurl";
 const initialState = {
   settings: [],
   loading: false,
@@ -15,7 +15,7 @@ export const fetchSettings = createAsyncThunk(
   "settings/fetchSettings",
   async () => {
     try {
-      const response = await axios.get(`${baseUrl}/api/settings/`);
+      const response = await apiClient.get(`${baseUrl}/api/settings/`);
 
       return response.data.data;
     } catch (error) {
@@ -27,7 +27,9 @@ export const fetchSettings = createAsyncThunk(
 export const fetchSettingById = createAsyncThunk(
   "users/fetchSettingData",
   async (settingId) => {
-    const response = await axios.get(`${baseUrl}/api/settings/${settingId}`);
+    const response = await apiClient.get(
+      `${baseUrl}/api/settings/${settingId}`
+    );
     return response.data;
   }
 );
@@ -36,7 +38,7 @@ export const createSetting = createAsyncThunk(
   "settings/createSetting",
   async (settingData) => {
     try {
-      const response = await axios.post(
+      const response = await apiClient.post(
         `${baseUrl}/api/settings/`,
         settingData
       );
@@ -51,7 +53,7 @@ export const updateSetting = createAsyncThunk(
   "settings/updateSetting",
   async ({ settingId, settingData }, { dispatch }) => {
     try {
-      const response = await axios.put(
+      const response = await apiClient.put(
         `${baseUrl}/api/settings/${settingId}`,
         settingData
       );
@@ -67,7 +69,7 @@ export const deleteSetting = createAsyncThunk(
   "settings/deleteSetting",
   async (settingId) => {
     try {
-      await axios.delete(`${baseUrl}/api/settings/${settingId}`);
+      await apiClient.delete(`${baseUrl}/api/settings/${settingId}`);
       return settingId;
     } catch (error) {
       throw error;

@@ -15,7 +15,12 @@ import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
 
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import {
+  setPermissionNames,
+  selectPermissionNames,
+} from "../../../redux/Slices/PermissionSlice";
+import { fetchRolePermissions } from "../../../redux/Slices/RoleSlice";
+import Cookies from "js-cookie";
 function DisplayRole() {
   // const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -28,7 +33,8 @@ function DisplayRole() {
   const roles = useSelector((state) => state.role.roles);
   const dispatchDelete = useDispatch();
   const dispatch = useDispatch();
-
+  const rolePermission = useSelector((state) => state.role.rolePermissions);
+  console.log("role ki permission  display user see ", rolePermission);
   console.log("role", roles);
 
   //delete
@@ -86,6 +92,48 @@ function DisplayRole() {
     dispatch(fetchRoles());
     setIsLoad(false);
   }, [dispatch]);
+
+  //filtering
+  useEffect(() => {
+    // Retrieve the string from the cookie
+    const userCookieString = Cookies.get("user-details");
+    if (userCookieString) {
+      try {
+        const userCookieData = JSON.parse(userCookieString);
+
+        const { roleId = "" } = userCookieData || {};
+        dispatch(fetchRolePermissions(roleId));
+
+        console.log("role id   userrrrrr meeh se ", roleId);
+      } catch (error) {
+        console.error("Error parsing user details cookie:", error);
+      }
+    } else {
+      console.log("User details cookie is not set.");
+    }
+  }, [dispatch]);
+  useEffect(() => {
+    if (rolePermission.length > 0) {
+      dispatch(setPermissionNames(rolePermission));
+    }
+  }, [dispatch, rolePermission]);
+
+  const permissionNames = useSelector(selectPermissionNames) || [];
+
+  console.log("permissionNames", permissionNames);
+
+  const hasRoleEdit = permissionNames.includes("role_edit");
+  const hasRoleDelete = permissionNames.includes("role_delete");
+  const hasRoleCreate = permissionNames.includes("role_add");
+
+  console.log(
+    "editt5ttt rolee",
+    hasRoleEdit,
+    "deleteeeeeen rolee  ",
+    hasRoleDelete,
+    "createeeerw role  ",
+    hasRoleCreate
+  );
   return (
     <>
       <div className="row">
@@ -93,12 +141,14 @@ function DisplayRole() {
           <h3 class="card-header">Existing Roles</h3>
         </div>
         <div className="col ms-auto text-end">
-          <button
-            className="btn btn-dark waves-effect waves-light"
-            onClick={() => setOpenCreateModal(true)} // Open the create role modal
-          >
-            Create New Role
-          </button>
+          {hasRoleCreate && (
+            <button
+              className="btn btn-dark waves-effect waves-light"
+              onClick={() => setOpenCreateModal(true)} // Open the create role modal
+            >
+              Create New Role
+            </button>
+          )}
         </div>
       </div>
 
@@ -132,7 +182,7 @@ function DisplayRole() {
           <thead>
             <tr>
               <th>Role Name</th>
-              <th>Actions</th>
+              {(hasRoleEdit || hasRoleDelete) && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -140,21 +190,24 @@ function DisplayRole() {
               <tr key={role.roleId}>
                 <td>{role.roleName}</td>
                 <td>
-                  <IconButton
-                    aria-label="Edit user"
-                    title="Edit User"
-                    onClick={() => handleUpdateRole(role.roleId)}
-                  >
-                    <EditIcon style={{ color: "#e3bd3a" }} />
-                  </IconButton>
-
-                  <IconButton
-                    aria-label="Delete user"
-                    title="Delete User"
-                    onClick={() => handleOpenDialog(role.roleId)}
-                  >
-                    <DeleteIcon style={{ color: "#aa1313" }} />
-                  </IconButton>
+                  {hasRoleEdit && (
+                    <IconButton
+                      aria-label="Edit user"
+                      title="Edit User"
+                      onClick={() => handleUpdateRole(role.roleId)}
+                    >
+                      <EditIcon style={{ color: "#e3bd3a" }} />
+                    </IconButton>
+                  )}
+                  {hasRoleDelete && (
+                    <IconButton
+                      aria-label="Delete user"
+                      title="Delete User"
+                      onClick={() => handleOpenDialog(role.roleId)}
+                    >
+                      <DeleteIcon style={{ color: "#aa1313" }} />
+                    </IconButton>
+                  )}
                 </td>
               </tr>
             ))}

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { baseUrl } from "../../../api/baseurl";
+import apiClient, { baseUrl } from "../../../api/baseurl";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
@@ -24,7 +24,6 @@ const Login = () => {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState("");
   const [emailForReset, setEmailForReset] = useState("");
-  console.log("wsddgasfsdafsda", emailForReset);
   const onSubmit = async (data) => {
     try {
       // Send a POST request to the login endpoint
@@ -32,12 +31,15 @@ const Login = () => {
 
       const { token } = res.data.data;
 
-      Cookies.set("token", token, {
-        expires: 1, // 1 day expiration
-        sameSite: "strict",
-      });
+      // Cookies.set("token", token, {
+      //   expires: 1, // 1 day expiration
+      //   sameSite: "strict",
+      // });
 
-      const response = await axios.get(`${baseUrl}/api/user/`);
+      localStorage.setItem("token", token);
+
+      const response = await apiClient.get(`${baseUrl}/api/user/`, {});
+      console.log("respoe", response);
       const users = response.data.data;
 
       // Check if the user exists in the database

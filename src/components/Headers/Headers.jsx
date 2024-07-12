@@ -1,43 +1,110 @@
 import React, { useEffect, useState } from "react";
 
 import "./Headers.css";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Button } from "@mui/material";
 import useLogout from "../../pages/Auth/Logout";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Cookies from "js-cookie";
+import { fetchRolePermissions } from "../../redux/Slices/RoleSlice";
+import {
+  fetchPermissions,
+  setPermissionNames,
+  selectPermissionNames,
+} from "../../redux/Slices/PermissionSlice";
 const Header = () => {
+  const dispatch = useDispatch();
+  const permissions = useSelector((state) => state.permissions.permissions);
+  console.log("permissions", permissions);
+  const permissionNames = useSelector(selectPermissionNames) || [];
+  const rolePermission = useSelector((state) => state.role.rolePermissions);
+
+  console.log("role ki permission ", rolePermission);
+
   const logout = useLogout();
-  // Retrieve the string from the cookie
-  const userCookieString = Cookies.get("user-details");
 
-  // Parse the string back to an object
-  const userCookieData = JSON.parse(userCookieString);
-
-  // Extract the name and roleName
-  const { firstName, lastName, roleName } = userCookieData;
-
-  // Format the first name and last name
-  const formattedFirstName =
-    firstName.charAt(0).toUpperCase() + firstName.slice(1);
-  const formattedLastName =
-    lastName && lastName.charAt(0).toUpperCase() + lastName.slice(1);
+  const [userDetails, setUserDetails] = useState({
+    firstName: "",
+    lastName: "",
+    roleName: "",
+  });
 
   useEffect(() => {
-    const toggleSidebar = () => {
-      const sidebar = document.getElementById("layout-menu");
-      sidebar.classList.toggle("hidden");
-    };
+    // Retrieve the string from the cookie
+    const userCookieString = Cookies.get("user-details");
+    if (userCookieString) {
+      try {
+        // Parse the string back to an object
+        const userCookieData = JSON.parse(userCookieString);
 
-    const sidebarToggle = document.getElementById("sidebarToggle");
-    sidebarToggle.addEventListener("click", toggleSidebar);
+        // Extract the name and roleName
+        // Example of safe destructuring with default values
+        const {
+          firstName = "",
+          lastName = "",
+          roleName = "",
+          roleId = "",
+        } = userCookieData || {};
+        dispatch(fetchRolePermissions(roleId));
+        dispatch(fetchPermissions());
 
-    // Clean up the event listener on component unmount
-    return () => {
-      sidebarToggle.removeEventListener("click", toggleSidebar);
-    };
-  }, []);
+        // Format the first name and last name
+        const formattedFirstName =
+          firstName.charAt(0).toUpperCase() + firstName.slice(1);
+        const formattedLastName =
+          lastName && lastName.charAt(0).toUpperCase() + lastName.slice(1);
 
+        console.log("role id", roleId);
+
+        // Update state
+        setUserDetails({
+          firstName: formattedFirstName,
+          lastName: formattedLastName,
+          roleName: roleName,
+        });
+      } catch (error) {
+        console.error("Error parsing user details cookie:", error);
+      }
+    } else {
+      console.log("User details cookie is not set.");
+    }
+  }, []); // Empty dependency array ensures this runs only once
+
+  // useEffect(() => {
+  //   const toggleSidebar = () => {
+  //     const sidebar = document.getElementById("layout-menu");
+  //     sidebar.classList.toggle("hidden");
+  //   };
+
+  //   const sidebarToggle = document.getElementById("sidebarToggle");
+  //   sidebarToggle.addEventListener("click", toggleSidebar);
+
+  //   // Clean up the event listener on component unmount
+  //   return () => {
+  //     sidebarToggle.removeEventListener("click", toggleSidebar);
+  //   };
+  // }, [dispatch]);
+
+  useEffect(() => {
+    if (rolePermission.length > 0) {
+      dispatch(setPermissionNames(rolePermission));
+    }
+  }, [dispatch, rolePermission]);
+
+  console.log("permission Names", permissionNames);
+
+  const hasSettingsRead = permissionNames.includes("settings_read");
+  const hasUserRead = permissionNames.includes("user_read");
+  const hasRoleRead = permissionNames.includes("role_read");
+
+  console.log(
+    "setting readdd ",
+    hasSettingsRead,
+    "has user read ",
+    hasUserRead,
+    "has role read ",
+    hasRoleRead
+  );
   return (
     <>
       <aside
@@ -87,32 +154,44 @@ const Header = () => {
               <i class="menu-icon tf-icons ri-home-smile-line"></i>
               <div data-i18n="Dashboards">Master</div>
             </Link>
-            <ul className="menu-sub">
-              <li class="menu-item">
-                <Link to={"/admin/users"} class="menu-link">
-                  <div data-i18n="Dashboard">User</div>
-                </Link>
-              </li>
-              <li class="menu-item">
-                <Link to={"/admin/roles"} class="menu-link">
-                  <div data-i18n="Dashboard">Role</div>
-                </Link>
-              </li>
+            <ul
+              className="menu-sub"
+              style={{ display: hasUserRead ? "inline" : "block" }}
+            >
+              {hasUserRead && (
+                <li class="menu-item">
+                  <Link to={"/admin/users"} class="menu-link">
+                    <div data-i18n="Dashboard">User</div>
+                  </Link>
+                </li>
+              )}
+              {hasRoleRead && (
+                <li
+                  class="menu-item"
+                  style={{ display: hasRoleRead ? "inline" : "block" }}
+                >
+                  <Link to={"/admin/roles"} class="menu-link">
+                    <div data-i18n="Dashboard">Role</div>
+                  </Link>
+                </li>
+              )}
             </ul>
           </li>
-          <li class="menu-item open">
-            <Link to={"#"} class="menu-link">
-              <i class="menu-icon tf-icons ri-home-smile-line"></i>
-              <div data-i18n="Dashboards">Settings</div>
-            </Link>
-            <ul className="menu-sub">
-              <li class="menu-item">
-                <Link to={"/settings"} class="menu-link">
-                  <div data-i18n="Dashboard">setting</div>
-                </Link>
-              </li>
-            </ul>
-          </li>
+          {hasSettingsRead && (
+            <li class="menu-item open">
+              <Link to={"#"} class="menu-link">
+                <i class="menu-icon tf-icons ri-home-smile-line"></i>
+                <div data-i18n="Dashboards">Settings</div>
+              </Link>
+              <ul className="menu-sub">
+                <li class="menu-item">
+                  <Link to={"/settings"} class="menu-link">
+                    <div data-i18n="Dashboard">setting</div>
+                  </Link>
+                </li>
+              </ul>
+            </li>
+          )}
         </ul>
       </aside>
       <nav
@@ -130,9 +209,9 @@ const Header = () => {
           <div className="col-auto ms-auto">
             <span className="user-name text-white">
               <div>
-                {formattedFirstName} {formattedLastName}
+                {userDetails.firstName} {userDetails.lastName}
               </div>
-              <div className="role">Role: {roleName}</div>
+              <div className="role">Role: {userDetails.roleName}</div>
             </span>
           </div>
           <div className="col-auto text-end ps-0">
