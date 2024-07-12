@@ -36,15 +36,16 @@ exports.login = async (req, res) => {
       expiresIn: "1h",
     });
 
-    // Set the token in a cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000,
-      secure: true,
-    });
+    // // Set the token in a cookie
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   sameSite: "strict",
+    //   maxAge: 24 * 60 * 60 * 1000,
+    //   secure: true,
+    // });
+    // Set the token in the response header
+    res.setHeader("authorization", `${token}`);
 
-    // Send success response
     return apiSuccessResponse(res, 200, { token, email }, "Login successful");
   } catch (error) {
     console.error("Login error:", error);

@@ -7,7 +7,7 @@ const {
   apiErrorResponse,
 } = require("../common/apiResponse");
 
-exports.createUser = async (req, res) => {
+exports.create = async (req, res) => {
   try {
     const {
       firstName,
@@ -65,7 +65,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-exports.getUsers = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
     // Fetch all users from the database
     const users = await User.findAll({
@@ -79,7 +79,7 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-exports.getUserById = async (req, res) => {
+exports.getById = async (req, res) => {
   try {
     const userId = req.params.id;
 
@@ -96,7 +96,7 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-exports.updateUser = async (req, res) => {
+exports.update = async (req, res) => {
   try {
     const userId = req.params.id;
     const { email, gender, status, age, firstName, lastName, password } =
@@ -126,7 +126,7 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-exports.deleteUser = async (req, res) => {
+exports.delete = async (req, res) => {
   try {
     const userId = req.params.id;
 

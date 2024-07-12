@@ -9,6 +9,7 @@ const sequelize = new Sequelize("college", "root", "saloni90", {
     acquire: 30000, // Maximum time, in milliseconds, that pool will try to get connection before throwing error
     idle: 10000, // Maximum time, in milliseconds, that a connection can be idle before being released
   },
+  logging: false,
 });
 
 // Test the connection

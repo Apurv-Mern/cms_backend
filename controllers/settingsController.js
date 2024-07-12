@@ -5,7 +5,7 @@ const {
   apiErrorResponse,
 } = require("../common/apiResponse");
 
-exports.createSettings = async (req, res) => {
+exports.create = async (req, res) => {
   try {
     const { name, options, displayName, type, value } = req.body;
 
@@ -53,7 +53,7 @@ exports.createSettings = async (req, res) => {
   }
 };
 
-exports.getSettings = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
     const settings = await Settings.findAll({ order: [["settingId", "DESC"]] });
     apiSuccessResponse(res, 200, settings, "Settings fetched successfully");
@@ -62,7 +62,26 @@ exports.getSettings = async (req, res) => {
     apiErrorResponse(res, 500, "Internal server error");
   }
 };
-exports.updateSettings = async (req, res) => {
+exports.getById = async (req, res) => {
+  try {
+    const settingId = req.params.id;
+
+    // Fetch the setting by ID
+    const setting = await Settings.findByPk(settingId);
+
+    // Check if the setting exists
+    if (!setting) {
+      return apiErrorResponse(res, 404, "Setting not found");
+    }
+
+    // Return success response with the setting data
+    apiSuccessResponse(res, 200, setting, "Setting fetched successfully");
+  } catch (error) {
+    console.error("Error fetching setting by ID:", error);
+    apiErrorResponse(res, 500, "Internal server error");
+  }
+};
+exports.update = async (req, res) => {
   try {
     const settingId = req.params.id;
     const { name, options, displayName, type, value } = req.body;
@@ -105,7 +124,8 @@ exports.updateSettings = async (req, res) => {
     apiErrorResponse(res, 500, "Internal server error");
   }
 };
-exports.deleteSettings = async (req, res) => {
+
+exports.delete = async (req, res) => {
   try {
     const settingId = req.params.id;
 
@@ -125,26 +145,6 @@ exports.deleteSettings = async (req, res) => {
     apiSuccessResponse(res, 200, null, "Setting deleted successfully");
   } catch (error) {
     console.error("Error deleting Setting:", error);
-    apiErrorResponse(res, 500, "Internal server error");
-  }
-};
-
-exports.getSettingById = async (req, res) => {
-  try {
-    const settingId = req.params.id;
-
-    // Fetch the setting by ID
-    const setting = await Settings.findByPk(settingId);
-
-    // Check if the setting exists
-    if (!setting) {
-      return apiErrorResponse(res, 404, "Setting not found");
-    }
-
-    // Return success response with the setting data
-    apiSuccessResponse(res, 200, setting, "Setting fetched successfully");
-  } catch (error) {
-    console.error("Error fetching setting by ID:", error);
     apiErrorResponse(res, 500, "Internal server error");
   }
 };

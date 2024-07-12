@@ -16,12 +16,14 @@ const Settings = require("./models/settings");
 const Permissions = require("./models/permissions");
 const RolesPermissions = require("./models/rolespermissions");
 const UserRole = require("./models/userRole.js");
+const Models = require("./models/models.js");
 
 const userRoutes = require("./routes/userRoute.js");
-const roleRoutes = require("./routes/roleRoute.js");
+const rolePermissionRoutes = require("./routes/rolePermissionRoute.js");
 const authRoutes = require("./routes/authLoginRoute.js");
-const settingsRoutes = require("./routes/settingsRoute.js");
+// const settingsRoutes = require("./routes/settingsRoute.js");
 const permissionRoutes = require("./routes/permissionRoute.js");
+const modelRoutes = require("./routes/modelRoute.js");
 
 const githubRoute = require("./routes/authGithubRoute.js");
 const facebookRoute = require("./routes/authFacebookRoute.js");
@@ -101,6 +103,7 @@ const syncModels = async () => {
     await Permissions.sync({ alter: true, transaction });
     await UserRole.sync({ alter: true, transaction });
     await RolesPermissions.sync({ alter: true, transaction });
+    await Models.sync({ alter: true, transaction });
   });
 };
 
@@ -114,19 +117,21 @@ app.get("/", (req, res) => {
 });
 
 // Use user routes
-app.use("/api/user", userRoutes);
+app.use("/api", userRoutes);
 
-// Use role routes
-app.use("/api/role", roleRoutes);
+// // Use role routes
+// app.use("/api/role", roleRoutes);
 
 //login
 app.use("/api/auth", authRoutes);
-
-//settings
-app.use("/api/settings", settingsRoutes);
+//rolePermission
+app.use("/api/rolePermission", rolePermissionRoutes);
 
 //permission
 app.use("/api/permissions", permissionRoutes);
+
+//modelName
+app.use("/api/model", modelRoutes);
 
 app.use(
   session({

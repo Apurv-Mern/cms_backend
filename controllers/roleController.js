@@ -7,7 +7,7 @@ const {
   apiErrorResponse,
 } = require("../common/apiResponse");
 
-exports.createRole = async (req, res) => {
+exports.create = async (req, res) => {
   try {
     const { roleName } = req.body;
 
@@ -40,7 +40,7 @@ exports.createRole = async (req, res) => {
   }
 };
 
-exports.getRoles = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
     console.log("Fetching roles from the database...");
 
@@ -54,11 +54,11 @@ exports.getRoles = async (req, res) => {
     apiErrorResponse(res, 500, "Internal server error");
   }
 };
-exports.updateRole = async (req, res) => {
+exports.update = async (req, res) => {
   try {
     const roleId = req.params.id;
     const { roleName, permissionNames } = req.body;
-
+    console.log("tummmmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
     // Find the role by roleId
     const role = await Role.findByPk(roleId);
     if (!role) {
@@ -122,8 +122,22 @@ exports.updateRole = async (req, res) => {
     apiErrorResponse(res, 500, "Internal server error");
   }
 };
+exports.getById = async (req, res) => {
+  try {
+    console.log("Fetching roles from the database...");
 
-exports.deleteRole = async (req, res) => {
+    // Fetch all roles from the database
+    const roles = await Role.findAll();
+
+    // console.log("Roles fetched successfully:", roles);
+    apiSuccessResponse(res, 200, roles, "Roles fetched successfully");
+  } catch (error) {
+    console.error("Error fetching roles:", error);
+    apiErrorResponse(res, 500, "Internal server error");
+  }
+};
+
+exports.delete = async (req, res) => {
   try {
     const roleId = req.params.id;
 
@@ -158,36 +172,6 @@ exports.deleteRole = async (req, res) => {
     apiSuccessResponse(res, 200, null, "Role deleted successfully");
   } catch (error) {
     console.error("Error deleting role:", error);
-    apiErrorResponse(res, 500, "Internal server error");
-  }
-};
-exports.getRolePermissions = async (req, res) => {
-  try {
-    const roleId = req.params.roleId;
-
-    // Check if the roleId is provided
-    if (!roleId) {
-      return apiErrorResponse(res, 400, "Role ID is required");
-    }
-
-    // Fetch role permissions based on the provided roleId
-    const rolePermissions = await RolePermission.findAll({
-      where: { roleId: roleId },
-    });
-
-    // Check if role permissions are found
-    if (rolePermissions.length === 0) {
-      return apiErrorResponse(res, 404, "Role Permissions not found");
-    }
-
-    apiSuccessResponse(
-      res,
-      200,
-      rolePermissions,
-      "Role Permissions fetched successfully"
-    );
-  } catch (error) {
-    console.error("Error fetching role permissions:", error);
     apiErrorResponse(res, 500, "Internal server error");
   }
 };
