@@ -17,6 +17,9 @@ const Permissions = require("./models/permissions");
 const RolesPermissions = require("./models/rolespermissions");
 const UserRole = require("./models/userRole.js");
 const Models = require("./models/models.js");
+const Database = require("./models/database.js");
+const DataType = require("./models/dataType.js");
+const IndexType = require("./models/indexType.js");
 
 const userRoutes = require("./routes/userRoute.js");
 const rolePermissionRoutes = require("./routes/rolePermissionRoute.js");
@@ -24,11 +27,12 @@ const authRoutes = require("./routes/authLoginRoute.js");
 // const settingsRoutes = require("./routes/settingsRoute.js");
 const permissionRoutes = require("./routes/permissionRoute.js");
 const modelRoutes = require("./routes/modelRoute.js");
-
+const databaseRoutes = require("./routes/databaseRoute.js");
 const githubRoute = require("./routes/authGithubRoute.js");
 const facebookRoute = require("./routes/authFacebookRoute.js");
 const googleRoute = require("./routes/authGoogleRoute.js");
-
+const dataTypeRoutes = require("./routes/dataTypeRoute.js");
+const indexTypeRoutes = require("./routes/indexTypeRoute.js");
 app.use(cors());
 app.use(cookieParser());
 
@@ -104,6 +108,9 @@ const syncModels = async () => {
     await UserRole.sync({ alter: true, transaction });
     await RolesPermissions.sync({ alter: true, transaction });
     await Models.sync({ alter: true, transaction });
+    await Database.sync({ alter: true, transaction });
+    await DataType.sync({ alter: true, transaction });
+    await IndexType.sync({ alter: true, transaction });
   });
 };
 
@@ -132,6 +139,13 @@ app.use("/api/permissions", permissionRoutes);
 
 //modelName
 app.use("/api/model", modelRoutes);
+//Database
+app.use("/api/database", databaseRoutes);
+
+//Datatype
+app.use("/api/datatype", dataTypeRoutes);
+//IndexType
+app.use("/api/indexType", indexTypeRoutes);
 
 app.use(
   session({
