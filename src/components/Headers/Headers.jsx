@@ -10,15 +10,16 @@ import { fetchRolePermissions } from "../../redux/Slices/RoleSlice";
 import {
   fetchPermissions,
   setPermissionNames,
-  selectPermissionNames,
 } from "../../redux/Slices/PermissionSlice";
 const Header = () => {
   const dispatch = useDispatch();
   const permissions = useSelector((state) => state.permissions.permissions);
   console.log("permissions", permissions);
-  const permissionNames = useSelector(selectPermissionNames) || [];
   const rolePermission = useSelector((state) => state.role.rolePermissions);
+  const permissionNames =
+    useSelector((state) => state.permissions.permissionNames) || [];
 
+  console.log("Permission Names", permissionNames);
   console.log("role ki permission ", rolePermission);
 
   const logout = useLogout();
@@ -28,7 +29,6 @@ const Header = () => {
     lastName: "",
     roleName: "",
   });
-
   useEffect(() => {
     // Retrieve the string from the cookie
     const userCookieString = Cookies.get("user-details");
@@ -45,8 +45,6 @@ const Header = () => {
           roleName = "",
           roleId = "",
         } = userCookieData || {};
-        dispatch(fetchRolePermissions(roleId));
-        dispatch(fetchPermissions());
 
         // Format the first name and last name
         const formattedFirstName =
@@ -62,13 +60,15 @@ const Header = () => {
           lastName: formattedLastName,
           roleName: roleName,
         });
+        dispatch(fetchRolePermissions(roleId));
+        dispatch(fetchPermissions());
       } catch (error) {
         console.error("Error parsing user details cookie:", error);
       }
     } else {
       console.log("User details cookie is not set.");
     }
-  }, []); // Empty dependency array ensures this runs only once
+  }, [dispatch]); // Empty dependency array ensures this runs only once
 
   // useEffect(() => {
   //   const toggleSidebar = () => {
@@ -86,12 +86,8 @@ const Header = () => {
   // }, [dispatch]);
 
   useEffect(() => {
-    if (rolePermission.length > 0) {
-      dispatch(setPermissionNames(rolePermission));
-    }
+    dispatch(setPermissionNames(rolePermission));
   }, [dispatch, rolePermission]);
-
-  console.log("permission Names", permissionNames);
 
   const hasSettingsRead = permissionNames.includes("settings_read");
   const hasUserRead = permissionNames.includes("user_read");
@@ -192,6 +188,19 @@ const Header = () => {
               </ul>
             </li>
           )}
+          <li class="menu-item open">
+            <Link to={"#"} class="menu-link">
+              <i class="menu-icon tf-icons ri-home-smile-line"></i>
+              <div data-i18n="Dashboards">Tools</div>
+            </Link>
+            <ul className="menu-sub">
+              <li class="menu-item">
+                <Link to={"/database"} class="menu-link">
+                  <div data-i18n="Dashboard">Database</div>
+                </Link>
+              </li>
+            </ul>
+          </li>
         </ul>
       </aside>
       <nav

@@ -7,15 +7,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { createUser, fetchRoles } from "../../../redux/Slices/UserSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import { yupResolver } from "@hookform/resolvers/yup";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { formSchema } from "../../../components/jordResolver";
 const AddUser = () => {
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ resolver: yupResolver(formSchema) });
 
   const roles = useSelector((state) => state.user.roles);
   const dispatch = useDispatch();
@@ -24,8 +25,9 @@ const AddUser = () => {
 
   const onSubmit = async (data) => {
     const result = await dispatch(createUser(data));
+    console.log("resulttt for user ", result);
     if (result.meta.requestStatus === "fulfilled") {
-      toast.success("User created successfully!");
+      toast.success(result.payload.message);
       navigate("/admin/users");
     } else {
       toast.error("Failed to create user.");
@@ -57,29 +59,16 @@ const AddUser = () => {
                   <label htmlFor="name" className="form-label">
                     First Name:
                   </label>
-                  <input
-                    type="text"
-                    style={{ display: "none" }}
-                    autoComplete="username"
-                  />
-                  <input
-                    type="password"
-                    style={{ display: "none" }}
-                    autoComplete="new-password"
-                  />
+
                   <input
                     autoComplete="off"
                     type="text"
                     className="form-control form-control-md"
-                    {...register("firstName", {
-                      required: true,
-                      minLength: 3,
-                      maxLength: 50,
-                    })}
+                    {...register("firstName")}
                   />
-                  {errors.name && (
+                  {errors.firstName && (
                     <span className="text-danger">
-                      Name is required and must be between 3 and 50 characters
+                      {errors.firstName.message}
                     </span>
                   )}
                 </div>
@@ -88,17 +77,16 @@ const AddUser = () => {
                 <div className="form-group">
                   <label htmlFor="email">Last Name</label>
                   <input
-                    autoComplete="off"
                     type="text"
+                    autoComplete="off"
                     className="form-control form-control-md"
-                    {...register("lastName", {
-                      required: true,
-                      minLength: 3,
-                      maxLength: 50,
-                    })}
+                    {...register("lastName")}
                   />
-                  {errors.userEmail && (
-                    <span className="text-danger">Last Name is required</span>
+                  {errors.lastName && (
+                    <span className="text-danger">
+                      {" "}
+                      {errors.lastName.message}
+                    </span>
                   )}
                 </div>
               </div>
@@ -110,13 +98,10 @@ const AddUser = () => {
                     type="text"
                     className="form-control"
                     id="user-email"
-                    {...register("email", {
-                      required: true,
-                      pattern: /^\S+@\S+\.\S+$/i,
-                    })}
+                    {...register("email", {})}
                   />
-                  {errors.userEmail && (
-                    <span className="text-danger">Email is required</span>
+                  {errors.email && (
+                    <span className="text-danger"> {errors.email.message}</span>
                   )}
                 </div>
               </div>
@@ -128,16 +113,11 @@ const AddUser = () => {
                     type="password"
                     className="form-control"
                     id="password"
-                    {...register("password", {
-                      required: true,
-                      minLength: 6,
-                      maxLength: 20,
-                    })}
+                    {...register("password", {})}
                   />
-                  {errors.userPassword && (
+                  {errors.password && (
                     <span className="text-danger">
-                      Password is required and should be min of 6 words and max
-                      of 20
+                      {errors.password.message}
                     </span>
                   )}
                 </div>
@@ -149,6 +129,9 @@ const AddUser = () => {
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>
+                  {errors.gender && (
+                    <span className="text-danger">{errors.gender.message}</span>
+                  )}
                 </div>
               </div>
               <div className="col-xl-4">
@@ -158,6 +141,9 @@ const AddUser = () => {
                     <option value="Active">Active</option>
                     <option value="De-active">De-active</option>
                   </select>
+                  {errors.status && (
+                    <span className="text-danger">{errors.status.message}</span>
+                  )}
                 </div>
               </div>
               <div className="col-xl-4">
@@ -166,12 +152,10 @@ const AddUser = () => {
                   <input
                     type="number"
                     className="form-control"
-                    {...register("age", { required: true, min: 18, max: 100 })}
+                    {...register("age")}
                   />
                   {errors.age && (
-                    <span className="text-danger">
-                      Age is required and must be between 18 and 100
-                    </span>
+                    <span className="text-danger">{errors.age.message}</span>
                   )}
                 </div>
               </div>
@@ -189,6 +173,11 @@ const AddUser = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.roleName && (
+                    <span className="text-danger">
+                      {errors.roleName.message}
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="col-12 text-end">

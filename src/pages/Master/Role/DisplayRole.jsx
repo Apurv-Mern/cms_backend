@@ -15,10 +15,7 @@ import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
 
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import {
-  setPermissionNames,
-  selectPermissionNames,
-} from "../../../redux/Slices/PermissionSlice";
+import { setPermissionNames } from "../../../redux/Slices/PermissionSlice";
 import { fetchRolePermissions } from "../../../redux/Slices/RoleSlice";
 import Cookies from "js-cookie";
 function DisplayRole() {
@@ -118,7 +115,8 @@ function DisplayRole() {
     }
   }, [dispatch, rolePermission]);
 
-  const permissionNames = useSelector(selectPermissionNames) || [];
+  const permissionNames =
+    useSelector((state) => state.permissions.permissionNames) || [];
 
   console.log("permissionNames", permissionNames);
 

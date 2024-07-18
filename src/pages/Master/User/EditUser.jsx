@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { updateUser, fetchUserData } from "../../../redux/Slices/UserSlice"; // Ensure this is the correct path to your thunk
-
+import { formSchema } from "../../../components/jordResolver";
+import { yupResolver } from "@hookform/resolvers/yup";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 const EditUser = () => {
   const { userId } = useParams();
@@ -16,7 +17,7 @@ const EditUser = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm({ resolver: yupResolver(formSchema) });
   // const user = useSelector((state) => state.user.user.data);
 
   const roles = useSelector((state) => state.user.roles);
@@ -35,8 +36,9 @@ const EditUser = () => {
   const onSubmit = async (formData) => {
     try {
       const result = await dispatch(updateUser({ userId, userData: formData }));
+      console.log("Update result:", result);
       if (result.meta.requestStatus === "fulfilled") {
-        toast.success("User updated successfully!");
+        toast.success(result.payload.message);
         navigate("/admin/users");
       } else {
         toast.error("Failed to update user.");
@@ -62,18 +64,13 @@ const EditUser = () => {
           <div className="form-group">
             <label htmlFor="name">First Name:</label>
             <input
+              autoComplete="off"
               type="text"
               className="form-control"
-              {...register("firstName", {
-                required: true,
-                minLength: 3,
-                maxLength: 50,
-              })}
+              {...register("firstName", {})}
             />
-            {errors.name && (
-              <span className="text-danger">
-                Name is required and must be between 3 and 50 characters
-              </span>
+            {errors.firstName && (
+              <span className="text-danger">{errors.firstName.message}</span>
             )}
           </div>
           <div className="form-group">
@@ -81,68 +78,48 @@ const EditUser = () => {
             <input
               type="text"
               className="form-control"
-              {...register("lastName", {
-                required: true,
-                minLength: 3,
-                maxLength: 50,
-              })}
+              {...register("lastName", {})}
             />
-            {errors.name && (
-              <span className="text-danger">
-                Last Name is required and must be between 3 and 50 characters
-              </span>
+            {errors.lastName && (
+              <span className="text-danger">{errors.lastName.message}</span>
             )}
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password:</label>
             <input
+              autoComplete="off"
               type="password"
               className="form-control"
               id="password"
-              {...register("password", {
-                required: true,
-                minLength: 6,
-                maxLength: 20,
-              })}
+              {...register("password", {})}
             />
 
             {errors.userPassword && (
-              <span className="text-danger">
-                Password is required and should be min of 6 words and max of 20
-              </span>
+              <span className="text-danger">{errors.password.message}</span>
             )}
           </div>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
             <input
+              autoComplete="off"
               type="email"
               className="form-control"
-              {...register("email", {
-                required: true,
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Invalid email address",
-                },
-              })}
+              {...register("email", {})}
             />
             {errors.email && (
-              <span className="text-danger">
-                Email is required and must be a valid email address
-              </span>
+              <span className="text-danger">{errors.email.message}</span>
             )}
           </div>
           <div className="form-group">
             <label htmlFor="gender">Gender:</label>
-            <select
-              className="form-control"
-              {...register("gender", {
-                required: true,
-              })}
-            >
+            <select className="form-control" {...register("gender", {})}>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
+            {errors.gender && (
+              <span className="text-danger">{errors.gender.message}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -151,18 +128,19 @@ const EditUser = () => {
               <option value="Active">Active</option>
               <option value="De-active">De-active</option>
             </select>
+            {errors.status && (
+              <span className="text-danger">{errors.status.message}</span>
+            )}
           </div>
           <div className="form-group">
             <label htmlFor="age">Age:</label>
             <input
               type="number"
               className="form-control"
-              {...register("age", { required: true, min: 18, max: 100 })}
+              {...register("age")}
             />
             {errors.age && (
-              <span className="text-danger">
-                Age is required and must be between 18 and 100
-              </span>
+              <span className="text-danger">{errors.age.message}</span>
             )}
           </div>
           <div className="form-group">
@@ -178,6 +156,9 @@ const EditUser = () => {
                 </option>
               ))}
             </select>
+            {errors.roleName && (
+              <span className="text-danger">{errors.roleName.message}</span>
+            )}
           </div>
           <button type="submit" className="btn btn-primary">
             Update User

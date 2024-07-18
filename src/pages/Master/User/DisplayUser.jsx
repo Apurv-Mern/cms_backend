@@ -11,10 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { fetchRolePermissions } from "../../../redux/Slices/RoleSlice";
 import ConfirmDeleteDialog from "../../../components/ConfirmDeleteDialog";
-import {
-  setPermissionNames,
-  selectPermissionNames,
-} from "../../../redux/Slices/PermissionSlice";
+import { setPermissionNames } from "../../../redux/Slices/PermissionSlice";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -159,7 +156,8 @@ const DisplayUser = () => {
     }
   }, [dispatch, rolePermission]);
 
-  const permissionNames = useSelector(selectPermissionNames) || [];
+  const permissionNames =
+    useSelector((state) => state.permissions.permissionNames) || [];
 
   console.log("permissionNames", permissionNames);
 

@@ -16,7 +16,8 @@ import Settings from "../pages/Settings/Settings";
 import EditRole from "../pages/Master/Role/EditRole";
 import AddSetting from "../pages/Settings/AddSetting";
 import UpdateSetting from "../pages/Settings/UpdateSetting";
-
+import DashBoard from "../pages/DashBoard";
+import Database from "../pages/Database/Database";
 const Navigation = () => {
   const location = useLocation();
   const isLoginPage =
@@ -51,6 +52,22 @@ const Navigation = () => {
               <div className="content-wrapper">
                 <div className="container-xxl">
                   <Routes>
+                    <Route
+                      path="/database"
+                      element={
+                        <ProtectedRoute>
+                          <Database />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <ProtectedRoute>
+                          <DashBoard />
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/admin/roles"
                       element={

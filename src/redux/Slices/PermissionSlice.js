@@ -6,6 +6,7 @@ const initialState = {
   permissions: [],
   loading: false,
   error: null,
+  permissionNames: [],
   //   isCreatingRole: false,
   //   roleCreationStatus: null,
 };
@@ -16,6 +17,7 @@ export const fetchPermissions = createAsyncThunk(
   async () => {
     try {
       const response = await axios.get(`${baseUrl}/api/permissions/`);
+
       return response.data.data;
     } catch (error) {
       throw error;
@@ -62,6 +64,5 @@ const PermissionSlice = createSlice({
 });
 
 export const { setPermissionNames } = PermissionSlice.actions;
-export const selectPermissionNames = (state) =>
-  state.permissions.permissionNames;
+
 export default PermissionSlice.reducer;

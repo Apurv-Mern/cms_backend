@@ -79,9 +79,13 @@ const EditRolePage = () => {
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    setRolePermissions({
-      ...rolePermissions,
-      [name]: checked,
+    setRolePermissions((prevPermissions) => {
+      const updatedPermissions = { ...prevPermissions, [name]: checked };
+      const category = name.split("_")[0];
+      if (["delete", "edit", "add"].includes(name.split("_")[1]) && checked) {
+        updatedPermissions[`${category}_read`] = true;
+      }
+      return updatedPermissions;
     });
   };
 
@@ -92,6 +96,9 @@ const EditRolePage = () => {
       }
       return map;
     }, {});
+    if (checked) {
+      updatedPermissions[`${category}_read`] = true;
+    }
     setRolePermissions({
       ...rolePermissions,
       ...updatedPermissions,

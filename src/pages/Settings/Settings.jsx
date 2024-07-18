@@ -12,10 +12,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteDialog from "../../components/ConfirmDeleteDialog.jsx";
 import { toast } from "react-toastify";
-import {
-  setPermissionNames,
-  selectPermissionNames,
-} from "../../redux/Slices/PermissionSlice.js";
+import { setPermissionNames } from "../../redux/Slices/PermissionSlice.js";
 import { fetchRolePermissions } from "../../redux/Slices/RoleSlice";
 import Cookies from "js-cookie";
 const Settings = () => {
@@ -266,7 +263,8 @@ const Settings = () => {
     }
   }, [dispatch, rolePermission]);
 
-  const permissionNames = useSelector(selectPermissionNames) || [];
+  const permissionNames =
+    useSelector((state) => state.permissions.permissionNames) || [];
 
   console.log("permissionNames", permissionNames);
 
@@ -289,12 +287,14 @@ const Settings = () => {
           <h3 className="card-header">Existing Settings</h3>
         </div>
         <div className="col ms-auto text-end">
-          <button
-            className="btn btn-dark waves-effect waves-light"
-            onClick={handleCreateSetting}
-          >
-            Create New Setting
-          </button>
+          {hasSettingCreate && (
+            <button
+              className="btn btn-dark waves-effect waves-light"
+              onClick={handleCreateSetting}
+            >
+              Create New Setting
+            </button>
+          )}
         </div>
       </div>
 
