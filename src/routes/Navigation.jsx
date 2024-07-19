@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import AddUser from "../pages/Master/User/AddUser";
 import Login from "../pages/Auth/Login/Login";
@@ -18,6 +18,7 @@ import AddSetting from "../pages/Settings/AddSetting";
 import UpdateSetting from "../pages/Settings/UpdateSetting";
 import DashBoard from "../pages/DashBoard";
 import Database from "../pages/Database/Database";
+import AddDatabase from "../pages/Database/AddDatabase";
 const Navigation = () => {
   const location = useLocation();
   const isLoginPage =
@@ -57,6 +58,14 @@ const Navigation = () => {
                       element={
                         <ProtectedRoute>
                           <Database />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/database/create"
+                      element={
+                        <ProtectedRoute>
+                          <AddDatabase />
                         </ProtectedRoute>
                       }
                     />

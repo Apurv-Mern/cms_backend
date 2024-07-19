@@ -1,24 +1,62 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDatabase } from "../../redux/Slices/DatabaseSlice";
+import {
+  fetchDatabase,
+  createDatabase,
+  deleteDatabase,
+} from "../../redux/Slices/DatabaseSlice";
 import { IconButton } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TableViewIcon from "@mui/icons-material/TableView";
+import ConfirmDeleteDialog from "../../components/ConfirmDeleteDialog";
 import TableStructureModal from "../../components/TableModalStructure";
+import { toast } from "react-toastify";
 const Database = () => {
   const dispatch = useDispatch();
   const database = useSelector((state) => state.database.database);
   console.log("dbbbb h yee", database);
+  const [isLoad, setIsLoad] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFields, setSelectedFields] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedDatabaseTableName, setSelectedDatabaseTableName] =
+    useState(null);
+  const navigate = useNavigate();
+
   const handleViewDatabase = (fields) => {
     setSelectedFields(fields);
     setModalOpen(true);
   };
-
+  const handleCreate = () => {
+    navigate("/database/create");
+  };
   const handleCloseModal = () => {
     setModalOpen(false);
+  };
+
+  //deleteee
+
+  const handleOpenDialog = (tableName) => {
+    setSelectedDatabaseTableName(tableName);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedDatabaseTableName(null);
+  };
+  const handleConfirmDelete = () => {
+    dispatch(deleteDatabase(selectedDatabaseTableName))
+      .then(() => {
+        toast.success("Database deleted successfully");
+        setIsLoad(true); // Assuming setIsLoad is used to refresh data, adjust as needed
+        handleCloseDialog();
+      })
+      .catch(() => {
+        toast.error("Failed to delete database");
+        handleCloseDialog();
+      });
   };
   useEffect(() => {
     dispatch(fetchDatabase());
@@ -34,7 +72,7 @@ const Database = () => {
         <div className="col ms-auto text-end">
           <button
             className="btn btn-dark waves-effect waves-light"
-            // onClick={() => setOpenCreateModal(true)} // Open the create role modal
+            onClick={() => handleCreate()}
           >
             Create New table
           </button>
@@ -69,7 +107,7 @@ const Database = () => {
         <table className="table">
           <thead>
             <tr>
-              <th>Role Name</th>
+              <th>Table Name</th>
               {<th>Actions</th>}
             </tr>
           </thead>
@@ -89,7 +127,7 @@ const Database = () => {
                   <IconButton
                     aria-label="Delete user"
                     title="Delete User"
-                    // onClick={() => handleOpenDialog(role.roleId)}
+                    onClick={() => handleOpenDialog(database.tableName)}
                   >
                     <DeleteIcon style={{ color: "#aa1313" }} />
                   </IconButton>
@@ -98,11 +136,11 @@ const Database = () => {
             ))}
           </tbody>
         </table>
-        {/* <ConfirmDeleteDialog
-    open={openDialog}
-    handleClose={handleCloseDialog}
-    handleConfirm={handleConfirmDelete}
-  />*/}
+        <ConfirmDeleteDialog
+          open={openDialog}
+          handleClose={handleCloseDialog}
+          handleConfirm={handleConfirmDelete}
+        />
 
         <TableStructureModal
           isOpen={modalOpen}
