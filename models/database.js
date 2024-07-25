@@ -12,6 +12,7 @@ const Database = sequelize.define(
     },
     tableName: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     fieldName: {
       type: DataTypes.STRING,
@@ -35,6 +36,14 @@ const Database = sequelize.define(
     },
     defaultValue: {
       type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    length: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    unsigned: {
+      type: DataTypes.BOOLEAN,
       allowNull: true,
     },
   },

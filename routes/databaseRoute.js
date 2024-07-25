@@ -12,6 +12,6 @@ router.get("/", databaseController.getAll);
 router.put("/:id", databaseController.update);
 
 //delete /api/roles
-router.delete("/:id", databaseController.delete);
+router.delete("/:tableName", databaseController.delete);
 
 module.exports = router;
