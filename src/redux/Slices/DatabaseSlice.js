@@ -59,7 +59,7 @@ export const createDatabase = createAsyncThunk(
         `${baseUrl}/api/database/`,
         databaseData
       );
-      return response.data;
+      return response.data.data[0];
     } catch (error) {
       throw error;
     }

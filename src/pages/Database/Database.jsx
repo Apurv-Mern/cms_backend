@@ -12,11 +12,13 @@ import TableViewIcon from "@mui/icons-material/TableView";
 import ConfirmDeleteDialog from "../../components/ConfirmDeleteDialog";
 import TableStructureModal from "../../components/TableModalStructure";
 import { toast } from "react-toastify";
+
 const Database = () => {
   const dispatch = useDispatch();
   const database = useSelector((state) => state.database.database);
   console.log("dbbbb h yee", database);
   const [isLoad, setIsLoad] = useState(false);
+  const [filterTerm, setFilterTerm] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFields, setSelectedFields] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -28,9 +30,7 @@ const Database = () => {
     setSelectedFields(fields);
     setModalOpen(true);
   };
-  const handleCreate = () => {
-    navigate("/database/create");
-  };
+
   const handleCloseModal = () => {
     setModalOpen(false);
   };
@@ -58,8 +58,17 @@ const Database = () => {
         handleCloseDialog();
       });
   };
+  const handleClearSearch = () => {
+    setFilterTerm("");
+  };
+  const filteredDatabase = database?.filter((db) => {
+    const tableName = db.tableName || "";
+    return tableName.toLowerCase().includes(filterTerm.toLowerCase());
+  });
+
   useEffect(() => {
     dispatch(fetchDatabase());
+    setIsLoad(true); // Assuming setIsLoad is used to refresh data, adjust as needed
   }, [dispatch]);
 
   return (
@@ -72,7 +81,7 @@ const Database = () => {
         <div className="col ms-auto text-end">
           <button
             className="btn btn-dark waves-effect waves-light"
-            onClick={() => handleCreate()}
+            onClick={() => navigate("/database/create")}
           >
             Create New table
           </button>
@@ -87,8 +96,8 @@ const Database = () => {
                 className="form-control"
                 type="text"
                 placeholder="Filter tables"
-                // value={filterTerm}
-                // onChange={(e) => setFilterTerm(e.target.value)}
+                value={filterTerm}
+                onChange={(e) => setFilterTerm(e.target.value)}
               />
             </div>
           </div>
@@ -96,7 +105,7 @@ const Database = () => {
           <div className="col-auto">
             <button
               className="btn btn-dark waves-effect waves-light"
-              // onClick={handleClearSearch}
+              onClick={handleClearSearch}
             >
               Clear Filters
             </button>
@@ -112,7 +121,7 @@ const Database = () => {
             </tr>
           </thead>
           <tbody>
-            {database.map((database) => (
+            {filteredDatabase.map((database) => (
               <tr key={database.databaseId}>
                 <td>{database.tableName}</td>
                 <td>

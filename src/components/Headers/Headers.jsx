@@ -16,14 +16,11 @@ const Header = () => {
   const permissions = useSelector((state) => state.permissions.permissions);
   console.log("permissions", permissions);
   const rolePermission = useSelector((state) => state.role.rolePermissions);
-  const permissionNames =
-    useSelector((state) => state.permissions.permissionNames) || [];
 
-  console.log("Permission Names", permissionNames);
   console.log("role ki permission ", rolePermission);
 
   const logout = useLogout();
-
+  const [isLoad, setIsLoad] = useState(false);
   const [userDetails, setUserDetails] = useState({
     firstName: "",
     lastName: "",
@@ -62,6 +59,7 @@ const Header = () => {
         });
         dispatch(fetchRolePermissions(roleId));
         dispatch(fetchPermissions());
+        setIsLoad(true);
       } catch (error) {
         console.error("Error parsing user details cookie:", error);
       }
@@ -84,10 +82,15 @@ const Header = () => {
   //     sidebarToggle.removeEventListener("click", toggleSidebar);
   //   };
   // }, [dispatch]);
+  const permissionNames =
+    useSelector((state) => state.permissions.permissionNames) || [];
 
+  console.log("Permission Names", permissionNames);
   useEffect(() => {
-    dispatch(setPermissionNames(rolePermission));
-  }, [dispatch, rolePermission]);
+    if (permissions.length > 0 && rolePermission.length > 0) {
+      dispatch(setPermissionNames(rolePermission));
+    }
+  }, [permissions, rolePermission, dispatch]);
 
   const hasSettingsRead = permissionNames.includes("settings_read");
   const hasUserRead = permissionNames.includes("user_read");

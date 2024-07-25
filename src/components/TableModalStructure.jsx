@@ -43,7 +43,7 @@ const TableStructureModal = ({ isOpen, onClose, tableFields }) => {
                 <tr key={index}>
                   <td>{field.fieldName}</td>
                   <td>{field.type}</td>
-                  <td>{field.notNull}</td>
+                  <td>{field.notNull ? "false" : "true"}</td>
                   <td>{field.index}</td>
                   <td>{field.defaultValue ? field.defaultValue : "NULL"}</td>
                   <td>{field.autoIncrement ? "AUTO_INCREMENT" : ""} </td>

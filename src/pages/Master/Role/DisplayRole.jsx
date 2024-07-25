@@ -81,10 +81,6 @@ function DisplayRole() {
   };
   //createRole
 
-  // const filteredRoles = roles.filter((role) =>
-  //   role.roleName.toLowerCase().includes(filterTerm.toLowerCase())
-  // );
-
   useEffect(() => {
     dispatch(fetchRoles());
     setIsLoad(false);

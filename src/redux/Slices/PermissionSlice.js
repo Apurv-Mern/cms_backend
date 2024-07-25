@@ -33,6 +33,7 @@ const PermissionSlice = createSlice({
   reducers: {
     setPermissionNames: (state, action) => {
       const rolePermissions = action.payload;
+
       state.permissionNames = rolePermissions
         .map((rolePermission) => {
           const permission = state.permissions.find(
