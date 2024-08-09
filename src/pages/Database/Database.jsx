@@ -63,6 +63,7 @@ const Database = () => {
   };
   const filteredDatabase = database?.filter((db) => {
     const tableName = db.tableName || "";
+    console.log("terrrmmm", filterTerm);
     return tableName.toLowerCase().includes(filterTerm.toLowerCase());
   });
 

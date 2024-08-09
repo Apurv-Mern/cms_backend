@@ -50,7 +50,7 @@ const AddDatabase = () => {
   const addTimestampFields = () => {
     append({
       fieldName: "createdAt",
-      type: "TIMESTAMP",
+      type: "DATETIME",
       notNull: false,
       autoIncrement: false,
       index: "",
@@ -58,7 +58,7 @@ const AddDatabase = () => {
     });
     append({
       fieldName: "updatedAt",
-      type: "TIMESTAMP",
+      type: "DATETIME",
       notNull: false,
       autoIncrement: false,
       index: "",
@@ -68,7 +68,7 @@ const AddDatabase = () => {
   const addSoftDeleteFields = () => {
     append({
       fieldName: "deletedAt",
-      type: "TIMESTAMP",
+      type: "DATETIME",
       notNull: false,
       autoIncrement: false,
       index: "",
