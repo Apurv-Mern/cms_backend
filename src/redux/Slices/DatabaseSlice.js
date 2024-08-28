@@ -8,6 +8,11 @@ const initialState = {
   error: null,
   dataType: [],
   indexType: [],
+  tableRows: [],
+
+  crudInfo: [],
+  isLoading: false,
+  crudCreationStatus: null,
 };
 
 // Define a thunk to fetch indextype data from the API
@@ -65,6 +70,41 @@ export const createDatabase = createAsyncThunk(
     }
   }
 );
+
+// Define a thunk to create a new database
+export const createTableRows = createAsyncThunk(
+  "database/createTableRows",
+  async (databaseData, tableName) => {
+    try {
+      const response = await apiClient.post(
+        `${baseUrl}/api/tableRows/`,
+        databaseData,
+        tableName
+      );
+      return response.data.data[0];
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+// Define a thunk to create a new database
+export const createCRUDinfo = createAsyncThunk(
+  "database/createCRUDinfo",
+  async (crudData) => {
+    try {
+      console.log("CRUD datatytatatattata", crudData);
+      const response = await apiClient.post(
+        `${baseUrl}/api/crudTable/`,
+        crudData
+      );
+      console.log("CRUD data", response.data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
+
 // Define a thunk to delete a user
 export const deleteDatabase = createAsyncThunk(
   "database/deleteDatabase",
@@ -146,6 +186,39 @@ const DatabaseSlice = createSlice({
         state.error = action.error.message;
         state.isCreatingDatabase = false;
       })
+      //create tableRows
+
+      .addCase(createTableRows.pending, (state) => {
+        state.tableRowCreationStatus = "loading";
+        state.isCreatingTableRows = true;
+      })
+      .addCase(createTableRows.fulfilled, (state, action) => {
+        state.tableRowCreationStatus = "success";
+        state.tableRows.push(action.payload);
+        state.isCreatingTableRows = false;
+      })
+      .addCase(createTableRows.rejected, (state, action) => {
+        state.tableRowCreationStatus = "error";
+        state.error = action.error.message;
+        state.isCreatingTableRows = false;
+      })
+
+      //create createCRUDinfo
+      .addCase(createCRUDinfo.pending, (state) => {
+        state.crudCreationStatus = "loading";
+        state.isLoading = true;
+      })
+      .addCase(createCRUDinfo.fulfilled, (state, action) => {
+        state.crudCreationStatus = "success";
+        state.crudInfo.push(action.payload);
+        state.isLoading = false;
+      })
+      .addCase(createCRUDinfo.rejected, (state, action) => {
+        state.crudCreationStatus = "error";
+        state.error = action.error.message;
+        state.isLoading = false;
+      })
+
       //deleteDatabase
       .addCase(deleteDatabase.pending, (state) => {
         state.loading = true;

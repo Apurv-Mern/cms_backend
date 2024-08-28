@@ -1,9 +1,4 @@
-// import axios from "axios";
-
-// axios.axi;
-
 import axios from "axios";
-import Cookies from "js-cookie";
 
 export const baseUrl = "http://localhost:4044";
 // Create an axios instance

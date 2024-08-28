@@ -19,6 +19,7 @@ import UpdateSetting from "../pages/Settings/UpdateSetting";
 import DashBoard from "../pages/DashBoard";
 import Database from "../pages/Database/Database";
 import AddDatabase from "../pages/Database/AddDatabase";
+import BreadCreate from "../pages/Database/CrudCreate";
 const Navigation = () => {
   const location = useLocation();
   const isLoginPage =
@@ -69,6 +70,15 @@ const Navigation = () => {
                         </ProtectedRoute>
                       }
                     />
+                    <Route
+                      path="/crud/create"
+                      element={
+                        <ProtectedRoute>
+                          <BreadCreate />
+                        </ProtectedRoute>
+                      }
+                    />
+
                     <Route
                       path="/dashboard"
                       element={

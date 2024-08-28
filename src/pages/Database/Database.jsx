@@ -66,6 +66,12 @@ const Database = () => {
     console.log("terrrmmm", filterTerm);
     return tableName.toLowerCase().includes(filterTerm.toLowerCase());
   });
+  const openCRUD = (tableName, fields) => {
+    console.log("table name", tableName);
+    navigate("/crud/create", {
+      state: { tableName, fields },
+    });
+  };
 
   useEffect(() => {
     dispatch(fetchDatabase());
@@ -118,13 +124,24 @@ const Database = () => {
           <thead>
             <tr>
               <th>Table Name</th>
-              {<th>Actions</th>}
+              <th>BREAD/CRUD Actions</th>
+              {<th>Table Actions</th>}
             </tr>
           </thead>
           <tbody>
             {filteredDatabase.map((database) => (
               <tr key={database.databaseId}>
                 <td>{database.tableName}</td>
+                <td>
+                  <button
+                    className="btn btn-dark waves-effect waves-light"
+                    onClick={() =>
+                      openCRUD(database.tableName, database.fields)
+                    }
+                  >
+                    + Add CRUD
+                  </button>
+                </td>
                 <td>
                   <IconButton
                     aria-label="View table structure"

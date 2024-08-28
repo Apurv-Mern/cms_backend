@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { setPermissionNames } from "../../../redux/Slices/PermissionSlice";
 import { fetchRolePermissions } from "../../../redux/Slices/RoleSlice";
 import Cookies from "js-cookie";
+
 function DisplayRole() {
   // const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
