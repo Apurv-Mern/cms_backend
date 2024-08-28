@@ -20,7 +20,8 @@ const Models = require("./models/models.js");
 const Database = require("./models/database.js");
 const DataType = require("./models/dataType.js");
 const IndexType = require("./models/indexType.js");
-
+const TableRows = require("./models/tableRows.js");
+const CrudTable = require("./models/crudTable.js");
 const userRoutes = require("./routes/userRoute.js");
 const rolePermissionRoutes = require("./routes/rolePermissionRoute.js");
 const authRoutes = require("./routes/authLoginRoute.js");
@@ -33,6 +34,9 @@ const facebookRoute = require("./routes/authFacebookRoute.js");
 const googleRoute = require("./routes/authGoogleRoute.js");
 const dataTypeRoutes = require("./routes/dataTypeRoute.js");
 const indexTypeRoutes = require("./routes/indexTypeRoute.js");
+const tableRowRoute = require("./routes/tableRowRoute.js");
+const crudTableRoute = require("./routes/crudTableRoute.js");
+
 app.use(cors());
 app.use(cookieParser());
 
@@ -111,6 +115,8 @@ const syncModels = async () => {
     await Database.sync({ alter: true, transaction });
     await DataType.sync({ alter: true, transaction });
     await IndexType.sync({ alter: true, transaction });
+    await TableRows.sync({ alter: true, transaction });
+    await CrudTable.sync({ alter: true, transaction });
   });
 };
 
@@ -146,6 +152,10 @@ app.use("/api/database", databaseRoutes);
 app.use("/api/datatype", dataTypeRoutes);
 //IndexType
 app.use("/api/indexType", indexTypeRoutes);
+//IndexType
+app.use("/api/tableRows", tableRowRoute);
+//IndexType
+app.use("/api/crudTable", crudTableRoute);
 
 app.use(
   session({

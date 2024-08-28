@@ -13,10 +13,14 @@ function mapFieldType(type) {
   switch (type.toUpperCase()) {
     case "INTEGER":
       return "DataTypes.INTEGER";
-    case "VARCHAR(255)":
+    case "VARCHAR":
+    case "STRING":
       return "DataTypes.STRING";
     case "DATETIME":
       return "DataTypes.DATE";
+    case "BOOLEAN":
+      return "DataTypes.BOOLEAN";
+
     // Add more mappings as needed
     default:
       return "DataTypes.STRING";
@@ -29,13 +33,14 @@ function createModelFileContent(tableData) {
   const tableNameCamelCase = tableName.replace(/(?:_| )([a-z])/g, (g) =>
     g[1].toUpperCase()
   );
-  const fieldsDefinition = fields.map((field) => {
-    if (
-      field.fieldName !== "createdAt" &&
-      field.fieldName !== "updatedAt" &&
-      field.fieldName !== "deletedAt"
-    ) {
-      return `
+  const fieldsDefinition = fields
+    .map((field) => {
+      if (
+        field.fieldName !== "createdAt" &&
+        field.fieldName !== "updatedAt" &&
+        field.fieldName !== "deletedAt"
+      ) {
+        return `
       ${field.fieldName}: {
         type: ${mapFieldType(field.type)},
         allowNull: ${!field.notNull},
@@ -46,10 +51,13 @@ function createModelFileContent(tableData) {
             : ""
         }
         ${field.index === "PRIMARY" ? "primaryKey: true," : ""}
-      }.join(",")`;
-    }
-    return ""; // Return an empty string for the filtered fields
-  });
+           ${field.index === "UNIQUE" ? "unique: true," : ""}
+      }`;
+      }
+      return ""; // Return an empty string for the filtered fields
+    })
+    .filter(Boolean) // Remove empty strings
+    .join(",\n"); // Join fields with commas and newlines
   return `
   const { Sequelize, DataTypes } = require('sequelize');
   const sequelize = require('../connection'); // Adjust the path to your database connection
@@ -210,7 +218,10 @@ exports.getAll = async (req, res) => {
 
     const whereClause = tableName ? { tableName } : {};
 
-    const databases = await Database.findAll({ where: whereClause });
+    const databases = await Database.findAll({
+      // where: whereClause,
+      order: [["tableName", "DESC"]],
+    });
 
     const responseData = databases.reduce((acc, db) => {
       const tableIndex = acc.findIndex(
