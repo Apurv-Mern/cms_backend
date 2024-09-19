@@ -2,12 +2,18 @@ const { DataTypes } = require("sequelize");
 
 const sequelize = require("./connection");
 
-const IndexType = sequelize.define(
+const tableData = sequelize.define(
   "tableData",
   {
+    tableDataId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+
     tableName: {
       type: DataTypes.STRING,
-      primaryKey: true,
+
       allowNull: false,
     },
     displayName: {
@@ -17,7 +23,6 @@ const IndexType = sequelize.define(
     urlSlug: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     modelName: {
       type: DataTypes.STRING,
@@ -36,4 +41,4 @@ const IndexType = sequelize.define(
     deletedAt: "deletedAt",
   }
 );
-module.exports = IndexType;
+module.exports = tableData;

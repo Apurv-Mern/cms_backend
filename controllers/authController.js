@@ -99,7 +99,6 @@ exports.requestPasswordReset = async (req, res) => {
         return apiErrorResponse(res, 500, "Failed to send reset email");
       } else {
         console.log("Email sent:", info.response);
-
         return apiSuccessResponse(res, 200, { resetLink }, "Reset email sent");
       }
     });
@@ -144,7 +143,6 @@ exports.resetPassword = async (req, res) => {
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
     await user.save();
-
     return apiSuccessResponse(res, 200, "Password reset successfully");
   } catch (error) {
     console.error("Password reset error:", error);

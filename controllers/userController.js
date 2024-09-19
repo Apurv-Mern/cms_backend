@@ -89,7 +89,12 @@ exports.getById = async (req, res) => {
       return apiErrorResponse(res, 404, "User not found");
     }
 
-    apiSuccessResponse(res, 200, user, "user with fetched successfully");
+    apiSuccessResponse(
+      res,
+      200,
+      user,
+      "user with {userID} fetched successfully"
+    );
   } catch (error) {
     console.error("Error fetching user by ID:", error);
     apiErrorResponse(res, 500, "Internal server error");

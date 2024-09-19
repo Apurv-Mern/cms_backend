@@ -22,6 +22,7 @@ const DataType = require("./models/dataType.js");
 const IndexType = require("./models/indexType.js");
 const TableRows = require("./models/tableRows.js");
 const CrudTable = require("./models/crudTable.js");
+
 const userRoutes = require("./routes/userRoute.js");
 const rolePermissionRoutes = require("./routes/rolePermissionRoute.js");
 const authRoutes = require("./routes/authLoginRoute.js");
@@ -58,6 +59,9 @@ User.belongsTo(Role, { foreignKey: "roleId" });
 
 UserRole.belongsTo(User, { foreignKey: "userId" });
 UserRole.belongsTo(Role, { foreignKey: "roleId" });
+
+// CrudTable.hasMany(Database, { foreignKey: "tableName" });
+// Database.belongsTo(CrudTable, { foreignKey: "tableName" });
 
 // Role.hasMany(Permissions, { foreignKey: "roleId" });
 // Permissions.belongsTo(Role, { foreignKey: "roleId" });

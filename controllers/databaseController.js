@@ -158,6 +158,7 @@ exports.create = async (req, res) => {
         length,
         unsigned,
       } = field;
+
       const databaseField = await Database.create({
         tableName,
         fieldName,
