@@ -22,7 +22,6 @@ const DataType = require("./models/dataType.js");
 const IndexType = require("./models/indexType.js");
 const TableRows = require("./models/tableRows.js");
 const CrudTable = require("./models/crudTable.js");
-const FrontendRouteStore = require("./models/frontendRouteStore.js");
 
 const userRoutes = require("./routes/userRoute.js");
 const rolePermissionRoutes = require("./routes/rolePermissionRoute.js");
@@ -38,7 +37,6 @@ const dataTypeRoutes = require("./routes/dataTypeRoute.js");
 const indexTypeRoutes = require("./routes/indexTypeRoute.js");
 const tableRowRoute = require("./routes/tableRowRoute.js");
 const crudTableRoute = require("./routes/crudTableRoute.js");
-const frontendRouteStoreRoute = require("./routes/frontendRouteStoreRoute.js");
 
 app.use(cors());
 app.use(cookieParser());
@@ -123,7 +121,6 @@ const syncModels = async () => {
     await IndexType.sync({ alter: true, transaction });
     await TableRows.sync({ alter: true, transaction });
     await CrudTable.sync({ alter: true, transaction });
-    await FrontendRouteStore.sync({ alter: true, transaction });
   });
 };
 
@@ -163,9 +160,6 @@ app.use("/api/indexType", indexTypeRoutes);
 app.use("/api/tableRows", tableRowRoute);
 //IndexType
 app.use("/api/crudTable", crudTableRoute);
-
-//frontendRouteStore
-app.use("/api/frontendRouteStore", frontendRouteStoreRoute);
 
 app.use(
   session({
